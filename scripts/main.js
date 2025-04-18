@@ -252,6 +252,26 @@ class Game {
             this.colliderAssets.draw(14 , 340 , 112 , 90 , 810 , 414 , 336 , 270);
 
 
+            // --- Rendering instructions ---
+            if(this.players.x >= 305 && this.players.x <= 345 && this.players.y >= 630 && this.players.y <=670){
+                this.menus.draw(299 , 6 , 156 , 43 , this.width*(0.2), this.height * (0.05), this.width * (0.6) ,  this.height*(0.9));
+                this.ctx.fillText('INSTRUCTIONS :-' ,this.width*(0.2) + 40, this.height * (0.05) + 110 )
+                this.ctx.fillText('1.) Go in front of main building to ' ,this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*1 )
+                this.ctx.fillText('choose your starter pokemon.' ,this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*2 )
+                this.ctx.fillText('2.) Navigate through menu screens ' , this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*3 )
+                this.ctx.fillText('using arrow keys and enter to' , this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*4 )
+                this.ctx.fillText('proceed through them.' , this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*5 )
+                this.ctx.fillText('3.) Movements through w,a,s,d!' , this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*6)
+                this.ctx.fillText('4.) After you get your starter buddy', this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*7)
+                this.ctx.fillText(',you can go to the bushes to find and', this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*8)
+                this.ctx.fillText('fight with wild pokemons.', this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*9)
+                this.ctx.fillText('5.) Just move to remove this screen', this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*10)
+                this.ctx.fillText('and if you again want to read', this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*11)
+                this.ctx.fillText('come back here again', this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*12)
+
+            }            
+
+
             // --- Rendering dialogs ---
             if(this.players.x >=940 && this.players.x <=999 && this.players.y >= 660 && this.players.y <= 690 ){
                 this.menus.draw(297 , 3.9 , 159 , 48  , this.width*(0.2), this.height * (0.8), this.width * (0.6) ,  this.height*(0.15));
@@ -375,18 +395,62 @@ class Game {
     }
 }
 
+let IntroDone = false
 
-window.addEventListener('load' , function(){
+async function IntroShow(ctx, path) {
+    return new Promise((resolve) => {
+        const image = new Image();
+        image.src = path;
+        image.onload = () => {
+            setTimeout(()=>{
+            ctx.clearRect(0,0,window.innerWidth , window.innerHeight);
+            ctx.drawImage(image, 0, 0, window.innerWidth, window.innerHeight);
+            resolve() }, 500)
+        };
+    });
+}
+
+
+
+
+window.addEventListener('load' , async function(){
     const canvas = document.getElementById('map');
     const ctx = canvas.getContext('2d');
-    
-    const game = new Game(canvas , ctx);
 
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    
+
+    if(!IntroDone){
+        await IntroShow(ctx , 'assets/image1.png')
+        await IntroShow(ctx , 'assets/image2.png')
+        await IntroShow(ctx , 'assets/image3.png')
+        await IntroShow(ctx , 'assets/image4.png')
+        window.addEventListener('keydown' , (e)=>{
+            if(!IntroDone && e.key === 'Enter'){
+                ctx.clearRect(0,0,window.innerWidth , window.innerHeight)
+                IntroDone = true
+                const game = new Game(canvas , ctx);
+        
+                game.render();
+                game.players.setup();
+                game.controls();
+                game.battle.controls();
+                game.update();
+
+            }
+        })
+        
+    }
+    else{
+        const game = new Game(canvas , ctx);
+        
         game.render();
         game.players.setup();
         game.controls();
         game.battle.controls();
         game.update();
+    }
 
 
 })
