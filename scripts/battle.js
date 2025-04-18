@@ -1,5 +1,7 @@
 import { Object } from "./Objects.js";
 
+
+
 function showLoadingScreen() {
     document.getElementById("loading-screen").style.display = "flex";
 }
@@ -8,6 +10,61 @@ function showLoadingScreen() {
 function hideLoadingScreen() {
     document.getElementById("loading-screen").style.display = "none";
 }
+
+
+
+async function fetchPokemonStat(data) {
+    return {
+        name: data.name,
+        stats: data.stats,
+        moves: data.moves,
+        sprite: data.sprites.front_default
+    };
+}
+
+function getStat(statsArray, statName) {
+    return statsArray.find(s => s.stat.name === statName).base_stat;
+}
+
+async function fetchMove(moveUrl) {
+    const res = await fetch(moveUrl);
+    const moveData = await res.json();
+    return {
+        name: moveData.name,
+        power: moveData.power, // can be null!
+        accuracy: moveData.accuracy,
+        type: moveData.type.name
+    };
+}
+
+function calculateDamage(level, power, attack, defense) {
+    const base = (((2 * level) / 5 + 2) * power * (attack / defense)) / 50 + 2;
+    return Math.floor(base * (0.85 + Math.random() * 0.15)); // random factor 0.85-1
+}
+
+async function performMove(attacker, defender, moveUrl) {
+    const move = await fetchMove(moveUrl);
+
+    if (!move.power) {
+        console.log(`${move.name} doesn't deal damage.`);
+        return;
+    }
+
+    const attackStat = getStat(attacker.stats, "attack");
+    const defenseStat = getStat(defender.stats, "defense");
+
+    const damage = calculateDamage(50, move.power, attackStat, defenseStat);
+    defender.hp -= damage;
+    if (defender.hp < 0) defender.hp = 0;
+
+    console.log(`${attacker.name} used ${move.name}!`);
+    console.log(`${defender.name} took ${damage} damage!`);
+}
+
+
+
+
+
 
 export class Battle{
     constructor(canvas , context){
@@ -37,6 +94,8 @@ export class Battle{
 
         this.scale = 48;
 
+        this.scene = 'battle'
+
         this.animation_time = 0;
         this.dialog_time = 0;
 
@@ -58,6 +117,7 @@ export class Battle{
         this.arrow_posx = 1200;
         this.arrow_posy = 780;
 
+        this.win = false
         // this.setup = false;
         
         
@@ -109,7 +169,16 @@ export class Battle{
         console.log(this.data)
         this.pokeimg2.src = this.data.sprites.front_default
         this.pokeimg2.style.display = 'block'
+
+
+        this.ourStarter = await fetchPokemonStat(this.starterData);
+        this.enemy = await fetchPokemonStat(this.data);
+
+        this.ourStarter.hp = getStat(this.ourStarter.stats, "hp");
+        this.enemy.hp = getStat(this.enemy.stats, "hp");
     }
+
+    
     
     
     render(){
@@ -192,7 +261,7 @@ export class Battle{
         this.ctx.fillStyle = "white"
         this.ctx.fillRect(415 , 145 , 450 , 40)
         this.ctx.fillStyle = "black"
-        this.ctx.fillText(`HP : ${this.data.stats[0].base_stat} /${this.data.stats[0].base_stat}` , 440 , 185)
+        this.ctx.fillText(`HP : ${this.enemy.hp} /${this.data.stats[0].base_stat}` , 440 , 185)
         
         if(this.attack_menu){
             this.menus.draw(297 , 3.9 , 159 , 48 , 0 , 714 , 3*this.width/5 , 270 );
@@ -213,9 +282,23 @@ export class Battle{
         this.ctx.fillStyle = "white"
         this.ctx.fillRect(1220 , 615 , 570 , 70)
         this.ctx.fillStyle = "black"
-        this.ctx.fillText(`HP : ${this.starterData.stats[0].base_stat} / ${this.starterData.stats[0].base_stat} ` , 1240 , 670)
+        this.ctx.fillText(`HP : ${this.ourStarter.hp} / ${this.starterData.stats[0].base_stat} ` , 1240 , 670)
 
+        if(this.enemy.hp <=0){
+            this.win = true
+        }
+        else{
+            this.win = false
+        }
 
+        if(this.win){
+            this.menus.draw(299 , 6 , 156 , 43 , this.width*(0.2), this.height * (0.25), this.width * (0.6) ,  this.height*(0.5));
+            this.ctx.fillText(`Congrats, You won` , this.width*(0.4) , this.height*(0.45))
+            setTimeout(()=>{
+                this.ctx.clearRect(0,0,window.innerWidth , window.innerHeight);
+                this.scene = 'world'
+            } , 3000)
+        }
         
     }
 
@@ -248,12 +331,62 @@ export class Battle{
             }
         })
 
-        window.addEventListener('keydown' , (e)=>{
+        window.addEventListener('keydown' , async(e)=>{
             if(e.key === 'Enter'){
-                if(this.arrow_posx === 1200 && this.arrow_posy === 780 && this.data !== ''){
+                if(this.arrow_posx === 1200 && this.arrow_posy === 780 && this.data !== '' ){
                     this.arrow_posx = 40;
                     this.attack_menu = true
                 }
+                else if(this.arrow_posx === 40 && this.arrow_posy === 780 && this.data !== '' && this.attack_menu === true){
+                    this.attack_menu = false
+                    this.arrow_posx = 1200
+                    this.arrow_posy = 780
+                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[0].move.url);
+                    await performMove(this.ourStarter, this.enemy ,  this.enemy.moves[0].move.url);
+                    setTimeout(()=>{
+                        this.attack_menu = true
+                        this.arrow_posx = 40
+                        this.arrow_posy = 780
+                    } , 2000)
+
+                }
+                else if(this.arrow_posx === 700 && this.arrow_posy === 780 && this.data !== '' && this.attack_menu === true){
+                    this.attack_menu = false
+                    this.arrow_posx = 1200
+                    this.arrow_posy = 780
+                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[1].move.url);
+                    await performMove(this.ourStarter, this.enemy ,  this.enemy.moves[1].move.url);
+                    setTimeout(()=>{
+                        this.attack_menu = true
+                        this.arrow_posx = 700
+                        this.arrow_posy = 780
+                    } , 2000)
+                }
+                else if(this.arrow_posx === 40 && this.arrow_posy === 860 && this.data !== '' && this.attack_menu === true){
+                    this.attack_menu = false
+                    this.arrow_posx = 1200
+                    this.arrow_posy = 780
+                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[2].move.url);
+                    await performMove(this.ourStarter, this.enemy ,  this.enemy.moves[2].move.url);
+                    setTimeout(()=>{
+                        this.attack_menu = true
+                        this.arrow_posx = 40
+                        this.arrow_posy = 860
+                    } , 2000)
+                }
+                else if(this.arrow_posx === 700 && this.arrow_posy === 860 && this.data !== '' && this.attack_menu === true){
+                    this.attack_menu = false
+                    this.arrow_posx = 1200
+                    this.arrow_posy = 780
+                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[3].move.url);
+                    await performMove(this.ourStarter, this.enemy ,  this.enemy.moves[3].move.url);
+                    setTimeout(()=>{
+                        this.attack_menu = true
+                        this.arrow_posx = 700
+                        this.arrow_posy = 860
+                    } , 2000)
+                }
+
             }
             if(e.key === 'b'){
                 this.arrow_posx = 1200;

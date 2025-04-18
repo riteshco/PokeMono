@@ -339,7 +339,7 @@ class Game {
             if(e.key === 'Enter'){
                 if(this.battle.arrow_posx === 1560 && this.battle.arrow_posy === 860){
                     this.scene = 'world'
-                    console.log(this.scene)
+                    // console.log(this.scene)
                 }
                 if(this.players.x >=940 && this.players.x <=999 && this.players.y >= 660 && this.players.y <= 690 && this.dialog ===0){
                     setTimeout(()=>{
