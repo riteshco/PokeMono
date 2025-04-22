@@ -11,7 +11,7 @@ function hideLoadingScreen() {
     document.getElementById("loading-screen").style.display = "none";
 }
 
-class Game {
+export class Game {
     constructor(canvas, context) {
         this.canvas = canvas;
         this.ctx = context;
@@ -280,21 +280,31 @@ class Game {
 
             // --- Rendering instructions ---
             if(this.players.x >= 305 && this.players.x <= 345 && this.players.y >= 630 && this.players.y <=670){
-                this.menus.draw(299 , 6 , 156 , 43 , this.width*(0.2), this.height * (0.05), this.width * (0.6) ,  this.height*(0.9));
-                this.ctx.fillText('INSTRUCTIONS :-' ,this.width*(0.2) + 40, this.height * (0.05) + 110 )
-                this.ctx.fillText('1.) Go in front of main building to ' ,this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*1 )
-                this.ctx.fillText('choose your starter pokemon.' ,this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*2 )
-                this.ctx.fillText('2.) Navigate through menu screens ' , this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*3 )
-                this.ctx.fillText('using arrow keys and enter to' , this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*4 )
-                this.ctx.fillText('proceed through them.' , this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*5 )
-                this.ctx.fillText('3.) Movements through w,a,s,d!' , this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*6)
-                this.ctx.fillText('4.) After you get your starter buddy', this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*7)
-                this.ctx.fillText(',you can go to the bushes to find and', this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*8)
-                this.ctx.fillText('fight with wild pokemons.', this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*9)
-                this.ctx.fillText('5.) Just move to remove this screen', this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*10)
-                this.ctx.fillText('and if you again want to read', this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*11)
-                this.ctx.fillText('come back here again', this.width*(0.2) + 40, this.height * (0.05) + 110 + 60*12)
 
+                const menuX = this.width * 0.2;
+                const menuY = this.height * 0.05;
+                const menuWidth = this.width * 0.6;
+                const menuHeight = this.height * 0.9;   
+
+                this.menus.draw(299, 6, 156, 43, menuX, menuY, menuWidth, menuHeight); 
+
+                const textX = menuX + this.width * 0.02;
+                const textStartY = menuY + this.height * 0.1;
+                const lineHeight = this.height * 0.055;
+                
+                this.ctx.fillText('INSTRUCTIONS :-', textX, textStartY);
+                this.ctx.fillText('1.) Go in front of main building to', textX, textStartY + lineHeight * 1);
+                this.ctx.fillText('choose your starter pokemon.', textX, textStartY + lineHeight * 2);
+                this.ctx.fillText('2.) Navigate through menu screens', textX, textStartY + lineHeight * 3);
+                this.ctx.fillText('using arrow keys and enter to', textX, textStartY + lineHeight * 4);
+                this.ctx.fillText('proceed through them.', textX, textStartY + lineHeight * 5);
+                this.ctx.fillText('3.) Movements through w,a,s,d!', textX, textStartY + lineHeight * 6);
+                this.ctx.fillText('4.) After you get your starter buddy', textX, textStartY + lineHeight * 7);
+                this.ctx.fillText(',you can go to the bushes to find and', textX, textStartY + lineHeight * 8);
+                this.ctx.fillText('fight with wild pokemons.', textX, textStartY + lineHeight * 9);
+                this.ctx.fillText('5.) Just move to remove this screen', textX, textStartY + lineHeight * 10);
+                this.ctx.fillText('and if you again want to read', textX, textStartY + lineHeight * 11);
+                this.ctx.fillText('come back here again', textX, textStartY + lineHeight * 12);
             }            
 
 
@@ -357,6 +367,13 @@ class Game {
                 this.setupDone = true
             }
             this.battle.update();
+            // if(this.battle.scene === 'world'){
+            //     this.scene = 'world';          // switch back to world
+            //     this.setupDone = false;       // reset for next battle
+            //     this.audio.src = 'assets/town.mp3';
+            //     this.audio.play();
+            
+            // }
         }
     }
 
@@ -459,6 +476,9 @@ window.addEventListener('load' , async function(){
         await IntroShow(ctx , 'assets/image2.png')
         await IntroShow(ctx , 'assets/image3.png')
         await IntroShow(ctx , 'assets/image4.png')
+        ctx.font = `${Math.floor(canvas.height * 0.05)}px 'Press Start 2P', sans-serif`
+        ctx.fillStyle = 'White'
+        ctx.fillText('Press ENTER to start!!' , canvas.width * (0.02) , canvas.height * (0.77))
         window.addEventListener('keydown' , (e)=>{
             if(!IntroDone && e.key === 'Enter'){
                 ctx.clearRect(0,0,window.innerWidth , window.innerHeight)

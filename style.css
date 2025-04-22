@@ -8,7 +8,7 @@ body {
 }
 
 img{
-    height: 35rem;
+    height: 60vh;
     transition: transform 0.5s ease-in-out;
 }
 

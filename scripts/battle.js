@@ -1,5 +1,5 @@
 import { Object } from "./Objects.js";
-
+import { Game } from "./main.js";
 
 
 function showLoadingScreen() {
@@ -115,6 +115,7 @@ export class Battle{
         this.scale = 48;
 
         this.scene = 'battle'
+        this.battleOver = false;
 
         this.animation_time = 0;
         this.dialog_time = 0;
@@ -134,8 +135,8 @@ export class Battle{
         // this.data = ''
         
         this.keys = {}
-        this.arrow_posx = 1200;
-        this.arrow_posy = 780;
+        this.arrow_posx = this.canvas.width * 0.625;
+        this.arrow_posy = this.canvas.height * 0.8;
 
         this.win = false
         this.lose = false
@@ -147,6 +148,11 @@ export class Battle{
         setTimeout(() => {
             this.update();
         }, 100);
+    }
+
+    endBattle() {
+        this.battleOver = true;
+
     }
 
     async dataGet(name) {
@@ -202,19 +208,19 @@ export class Battle{
         
         if(this.animation_completed === false){
             if(Math.floor(this.animation_time/3) <100){
-                this.sprites_animation0.draw(0,0, 600 , 670, 0 , 240 , 600 , 670)
+                this.sprites_animation0.draw(0, 0, 600, 670, 0, this.canvas.height * 0.26, 600, 670)
             }
             else if(Math.floor(this.animation_time/3) < 200){
-                this.sprites_animation1.draw(0 , 0 , 570 , 670 , 0 , 240 , 600 , 670)
+                this.sprites_animation1.draw(0, 0, 570, 670, 0, this.canvas.height * 0.26, 600, 670)
             }
             else if(Math.floor(this.animation_time/3) < 300){
-                this.sprites_animation2.draw(0 , 0 , 620 , 690 , 0 , 240 , 600 , 670)
+                this.sprites_animation2.draw(0, 0, 620, 690, 0, this.canvas.height * 0.26, 600, 670)
             }
             else if(Math.floor(this.animation_time/3) < 400){
-                this.sprites_animation3.draw(0 , 0 , 650 , 690 , 0 , 240 , 600 , 670)
+                this.sprites_animation3.draw(0, 0, 650, 690, 0, this.canvas.height * 0.26, 600, 670)
             }
             else if(Math.floor(this.animation_time/3) < 500){
-                this.sprites_animation4.draw(0 , 0 , 620 , 690 , 0 , 240 , 600 , 670)
+                this.sprites_animation4.draw(0, 0, 620, 690, 0, this.canvas.height * 0.26, 600, 670)
                 this.animation_completed = true
             }
             this.animation_time +=1;
@@ -228,102 +234,110 @@ export class Battle{
             this.pokeimg1.style.display = 'block'
         }
 
+        const menuBottomHeight = Math.min(this.canvas.height * 0.3, this.canvas.height * 0.3);
+        const menuBottomY = this.canvas.height + this.canvas.height * (0.02) - menuBottomHeight;
         
+        this.menus.draw(298, 56, 238, 51, 0, menuBottomY, this.canvas.width, menuBottomHeight);
         
-        this.menus.draw(298 , 56 , 238 , 51 , 0 , 714 , this.width , 270);
-        this.menus.draw(146 , 4 , 119 , 51 , 3*this.width/5 , 714 , this.width/2.5 , 270);
-        
+        const rightMenuWidth = this.canvas.width / 2.5;
+        const rightMenuX = this.canvas.width - rightMenuWidth;
+        this.menus.draw(146, 4, 119, 51, rightMenuX, menuBottomY, rightMenuWidth, menuBottomHeight);
         
         if(this.keys['up']){
-            if(this.arrow_posy === 860)
-                this.arrow_posy -= 80
+            if(this.arrow_posy === this.canvas.height * 0.9)
+                this.arrow_posy -= this.canvas.height * 0.1
             this.keys['up'] = false
         }
         if(this.keys['down']){
-            if(this.arrow_posy === 780)
-                this.arrow_posy +=80
+            if(this.arrow_posy === this.canvas.height * 0.8)
+                this.arrow_posy += this.canvas.height * 0.1
             this.keys['down'] = false
         }
         if(this.keys['left']){
-            if(this.arrow_posx === 1560){
-                this.arrow_posx -= 360
+            if(this.arrow_posx === this.canvas.width * 0.35) {
+                this.arrow_posx -= this.canvas.width * 0.33
             }
-            if(this.arrow_posx === 700){
-                this.arrow_posx -= 660
+            else if(this.arrow_posx > this.canvas.width * 0.625) {
+                this.arrow_posx -= this.canvas.width * 0.18
             }
+
             this.keys['left'] = false
         }
         if(this.keys['right']){
-            if(this.arrow_posx === 1200){
-                this.arrow_posx += 360
+            if(this.arrow_posx === this.canvas.width * 0.625) {
+                this.arrow_posx += this.canvas.width * 0.18
             }
-            if(this.arrow_posx === 40){
-                this.arrow_posx += 660
+            if(this.arrow_posx >= this.canvas.width * 0.01 && this.arrow_posx < this.canvas.width * 0.3) {
+                this.arrow_posx += this.canvas.width * 0.33
             }
             this.keys['right'] = false
         }
         if(!this.animation_completed){
-            this.ctx.fillText(`A wild ${this.pokename} appeared!` , 70 , 800);
+            this.ctx.fillText(`A wild ${this.pokename} appeared!`, this.canvas.width * 0.035, this.canvas.height * 0.83);
         }else{
-            this.ctx.fillText(`GO ${this.starter_name}!!` , 70 , 800);
+            this.ctx.fillText(`GO ${this.starter_name}!!`, this.canvas.width * 0.035, this.canvas.height * 0.83);
         }
 
-        this.menus.draw(4 , 3 , 91 , 29 , 400 , 90 , 480 , 120) // Enemy stats
+        this.menus.draw(4, 3, 91, 29, this.canvas.width * 0.2, this.canvas.height * 0.09, this.canvas.width * 0.24, this.canvas.height * 0.14) // Enemy stats
         this.ctx.fillStyle = "black"
-        this.ctx.fillText(`${this.pokename}` , 440 , 140)
+        this.ctx.fillText(`${this.pokename}`, this.canvas.width * 0.22, this.canvas.height * 0.14)
         this.ctx.fillStyle = "white"
-        this.ctx.fillRect(415 , 145 , 450 , 40)
+        this.ctx.fillRect(this.canvas.width * 0.2075, this.canvas.height * 0.145, this.canvas.width * 0.225, this.canvas.height * 0.04)
         this.ctx.fillStyle = "black"
-        this.ctx.fillText(`HP : ${this.enemy.hp} /${this.data.stats[0].base_stat}` , 440 , 185)
+        this.ctx.fillText(`HP : ${this.enemy.hp} /${this.data.stats[0].base_stat}`, this.canvas.width * 0.22, this.canvas.height * 0.185)
         
         if(this.attack_menu){
-            this.menus.draw(297 , 3.9 , 159 , 48 , 0 , 714 , 3*this.width/5 , 270 );
+            this.menus.draw(297, 3.9, 159, 48, 0, this.canvas.height * 0.74, this.canvas.width * 0.6, this.canvas.height * 0.27);
             const moveNames = this.starterData.moves.slice(0, 4).map(m => m.move.name)
             this.ctx.fillStyle = "black"
-            this.ctx.fillText(`${moveNames[0]}` , 100 , 820);
-            this.ctx.fillText(`${moveNames[1]}` , 760 , 820);
-            this.ctx.fillText(`${moveNames[2]}` , 100 , 900);
-            this.ctx.fillText(`${moveNames[3]}` , 760 , 900);
-
+            this.ctx.fillText(`${moveNames[0]}`, this.canvas.width * 0.05, this.canvas.height * 0.84);
+            this.ctx.fillText(`${moveNames[1]}`, this.canvas.width * 0.38, this.canvas.height * 0.84);
+            this.ctx.fillText(`${moveNames[2]}`, this.canvas.width * 0.05, this.canvas.height * 0.94);
+            this.ctx.fillText(`${moveNames[3]}`, this.canvas.width * 0.38, this.canvas.height * 0.94);
         }
         
-        this.menus.draw(269 , 3.9 , 5 , 9.2 , this.arrow_posx , this.arrow_posy ,50,50);//arrow
+        this.menus.draw(269, 3.9, 5, 9.2, this.arrow_posx, this.arrow_posy, this.canvas.width * 0.025, this.canvas.height * 0.05);//arrow
 
-        this.menus.draw(12 , 45 , 91 , 36 , 1200 , 560 , 600 , 150) // Our Starter stats
+        this.menus.draw(12, 45, 91, 36, this.canvas.width * 0.6, this.canvas.height * 0.58, this.canvas.width * 0.3, this.canvas.height * 0.15) // Our Starter stats
         this.ctx.fillStyle = "black"
-        this.ctx.fillText(`${this.starter_name}` , 1240 , 610)
+        this.ctx.fillText(`${this.starter_name}`, this.canvas.width * 0.62, this.canvas.height * 0.63)
         this.ctx.fillStyle = "white"
-        this.ctx.fillRect(1220 , 615 , 570 , 70)
+        this.ctx.fillRect(this.canvas.width * 0.61, this.canvas.height * 0.635, this.canvas.width * 0.285, this.canvas.height * 0.07)
         this.ctx.fillStyle = "black"
-        this.ctx.fillText(`HP : ${this.ourStarter.hp} / ${this.starterData.stats[0].base_stat} ` , 1240 , 670)
+        this.ctx.fillText(`HP : ${this.ourStarter.hp} / ${this.starterData.stats[0].base_stat}`, this.canvas.width * 0.62, this.canvas.height * 0.7)
 
-        if(this.enemy.hp <=0){
+        if(this.enemy.hp <= 0){
             this.win = true
+            this.attack_menu = false
         }
         else{
             this.win = false
         }
-        if(this.ourStarter.hp <=0){
+        if(this.ourStarter.hp <= 0){
             this.lose = true
+            this.attack_menu = false
         }
         else{
             this.lose = false
         }
 
         if(this.win){
-            this.menus.draw(299 , 6 , 156 , 43 , this.width*(0.2), this.height * (0.25), this.width * (0.6) ,  this.height*(0.5));
-            this.ctx.fillText(`Congrats, You won` , this.width*(0.4) , this.height*(0.45))
-            setTimeout(()=>{
-                this.ctx.clearRect(0,0,window.innerWidth , window.innerHeight);
+            this.menus.draw(299, 6, 156, 43, this.canvas.width * 0.2, this.canvas.height * 0.25, this.canvas.width * 0.6, this.canvas.height * 0.5);
+            this.ctx.fillText(`Congrats, You won`, this.canvas.width * 0.4, this.canvas.height * 0.45)
+            setTimeout(() => {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.endBattle()
                 this.scene = 'world'
-            } , 3000)
-        }if(this.lose){
-            this.menus.draw(299 , 6 , 156 , 43 , this.width*(0.2), this.height * (0.25), this.width * (0.6) ,  this.height*(0.5));
-            this.ctx.fillText(`Ahh! You Lost!` , this.width*(0.4) , this.height*(0.45))
-            setTimeout(()=>{
-                this.ctx.clearRect(0,0,window.innerWidth , window.innerHeight);
+            }, 3000)
+        }
+        if(this.lose){
+            this.menus.draw(299, 6, 156, 43, this.canvas.width * 0.2, this.canvas.height * 0.25, this.canvas.width * 0.6, this.canvas.height * 0.5);
+            this.ctx.fillText(`Ahh! You Lost!`, this.canvas.width * 0.4, this.canvas.height * 0.45)
+            setTimeout(() => {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.endBattle()
                 this.scene = 'world'
-            } , 3000)
+            }, 3000)
         }
         
     }
@@ -331,17 +345,17 @@ export class Battle{
 
     
     controls(){
-        window.addEventListener('keydown' , (e)=>{
+        window.addEventListener('keydown', (e) => {
             this.MakeFalse();
             switch(e.key){
                 case 'ArrowUp':
-                    case 'w':
-                        this.keys['up'] = true;
-                        break;
-                        
-                        case 'ArrowDown':
-                            case 's':
-                                this.keys['down'] = true;
+                case 'w':
+                    this.keys['up'] = true;
+                    break;
+                    
+                case 'ArrowDown':
+                case 's':
+                    this.keys['down'] = true;
                     break;
                 
                 case 'ArrowLeft':
@@ -353,74 +367,73 @@ export class Battle{
                 case 'd':
                     this.keys['right'] = true;
                     break;
-
             }
         })
 
-        window.addEventListener('keydown' , async(e)=>{
+        window.addEventListener('keydown', async(e) => {
             if(e.key === 'Enter'){
-                if(this.arrow_posx === 1200 && this.arrow_posy === 780 && this.data !== '' ){
-                    this.arrow_posx = 40;
+                if(this.arrow_posx === this.canvas.width * 0.625 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== ''){
+                    this.arrow_posx = this.canvas.width * 0.02;
                     this.attack_menu = true
                 }
-                else if(this.arrow_posx === 40 && this.arrow_posy === 780 && this.data !== '' && this.attack_menu === true){
-                    this.attack_menu = false
-                    this.arrow_posx = 1200
-                    this.arrow_posy = 780
-                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[0].move.url , 'pokemon1' , 'starter-translate');
-                    await performMove(this.enemy ,  this.ourStarter, this.enemy.moves[0].move.url , 'pokemon2' , 'enemy-translate');
-                    setTimeout(()=>{
-                        this.attack_menu = true
-                        this.arrow_posx = 40
-                        this.arrow_posy = 780
-                    } , 2000)
-
+                else if(this.arrow_posx === this.canvas.width * 0.805 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== ''){
+                    this.endBattle()
                 }
-                else if(this.arrow_posx === 700 && this.arrow_posy === 780 && this.data !== '' && this.attack_menu === true){
+                else if(this.arrow_posx === this.canvas.width * 0.02 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && this.attack_menu === true){
                     this.attack_menu = false
-                    this.arrow_posx = 1200
-                    this.arrow_posy = 780
-                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[1].move.url, 'pokemon1' , 'starter-translate');
-                    await performMove(this.enemy ,  this.ourStarter, this.enemy.moves[1].move.url, 'pokemon2' , 'enemy-translate');
-                    setTimeout(()=>{
+                    this.arrow_posx = this.canvas.width * 0.625
+                    this.arrow_posy = this.canvas.height * 0.8
+                    await performMove(this.ourStarter, this.enemy, this.ourStarter.moves[0].move.url, 'pokemon1', 'starter-translate');
+                    await performMove(this.enemy, this.ourStarter, this.enemy.moves[0].move.url, 'pokemon2', 'enemy-translate');
+                    setTimeout(() => {
                         this.attack_menu = true
-                        this.arrow_posx = 700
-                        this.arrow_posy = 780
-                    } , 2000)
+                        this.arrow_posx = this.canvas.width * 0.02
+                        this.arrow_posy = this.canvas.height * 0.8
+                    }, 2000)
                 }
-                else if(this.arrow_posx === 40 && this.arrow_posy === 860 && this.data !== '' && this.attack_menu === true){
+                else if(this.arrow_posx === this.canvas.width * 0.35 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && this.attack_menu === true){
                     this.attack_menu = false
-                    this.arrow_posx = 1200
-                    this.arrow_posy = 780
-                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[2].move.url, 'pokemon1' , 'starter-translate');
-                    await performMove(this.enemy ,  this.ourStarter, this.enemy.moves[2].move.url, 'pokemon2' , 'enemy-translate');
-                    setTimeout(()=>{
+                    this.arrow_posx = this.canvas.width * 0.625
+                    this.arrow_posy = this.canvas.height * 0.8
+                    await performMove(this.ourStarter, this.enemy, this.ourStarter.moves[1].move.url, 'pokemon1', 'starter-translate');
+                    await performMove(this.enemy, this.ourStarter, this.enemy.moves[1].move.url, 'pokemon2', 'enemy-translate');
+                    setTimeout(() => {
                         this.attack_menu = true
-                        this.arrow_posx = 40
-                        this.arrow_posy = 860
-                    } , 2000)
+                        this.arrow_posx = this.canvas.width * 0.35
+                        this.arrow_posy = this.canvas.height * 0.8
+                    }, 2000)
                 }
-                else if(this.arrow_posx === 700 && this.arrow_posy === 860 && this.data !== '' && this.attack_menu === true){
+                else if(this.arrow_posx === this.canvas.width * 0.02 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== '' && this.attack_menu === true){
                     this.attack_menu = false
-                    this.arrow_posx = 1200
-                    this.arrow_posy = 780
-                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[3].move.url, 'pokemon1', 'starter-translate');
-                    await performMove(this.enemy ,  this.ourStarter, this.enemy.moves[3].move.url, 'pokemon2' , 'enemy-translate');
-                    setTimeout(()=>{
+                    this.arrow_posx = this.canvas.width * 0.625
+                    this.arrow_posy = this.canvas.height * 0.8
+                    await performMove(this.ourStarter, this.enemy, this.ourStarter.moves[2].move.url, 'pokemon1', 'starter-translate');
+                    await performMove(this.enemy, this.ourStarter, this.enemy.moves[2].move.url, 'pokemon2', 'enemy-translate');
+                    setTimeout(() => {
                         this.attack_menu = true
-                        this.arrow_posx = 700
-                        this.arrow_posy = 860
-                    } , 2000)
+                        this.arrow_posx = this.canvas.width * 0.02
+                        this.arrow_posy = this.canvas.height * 0.9
+                    }, 2000)
                 }
-
+                else if(this.arrow_posx === this.canvas.width * 0.35 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== '' && this.attack_menu === true){
+                    this.attack_menu = false
+                    this.arrow_posx = this.canvas.width * 0.625
+                    this.arrow_posy = this.canvas.height * 0.8
+                    await performMove(this.ourStarter, this.enemy, this.ourStarter.moves[3].move.url, 'pokemon1', 'starter-translate');
+                    await performMove(this.enemy, this.ourStarter, this.enemy.moves[3].move.url, 'pokemon2', 'enemy-translate');
+                    setTimeout(() => {
+                        this.attack_menu = true
+                        this.arrow_posx = this.canvas.width * 0.35
+                        this.arrow_posy = this.canvas.height * 0.9
+                    }, 2000)
+                }
             }
             if(e.key === 'b'){
-                this.arrow_posx = 1200;
-                this.arrow_posy = 780;
+                this.arrow_posx = this.canvas.width * 0.625;
+                this.arrow_posy = this.canvas.height * 0.8;
                 this.attack_menu = false
             }
         })
-
     }
 
     MakeFalse(){
@@ -432,8 +445,12 @@ export class Battle{
 
 
     update() {
-        
-        this.render();
-        requestAnimationFrame(this.update); // To loop again and again
+        // if (this.battleOver) {
+        //     this.scene = 'world';
+        // }  
+        // else{
+            this.render();
+            requestAnimationFrame(this.update); // To loop again and again
+        // }
     }
 }
