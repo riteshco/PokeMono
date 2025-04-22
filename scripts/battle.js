@@ -42,7 +42,12 @@ function calculateDamage(level, power, attack, defense) {
     return Math.floor(base * (0.85 + Math.random() * 0.15)); // random factor 0.85-1
 }
 
-async function performMove(attacker, defender, moveUrl) {
+async function performMove(attacker, defender, moveUrl , id , classToAdd) {
+    let moving = document.getElementById(id)
+    moving.classList.add(classToAdd)
+    setTimeout(()=>{
+        moving.classList.remove(classToAdd)
+    } , 1000)
     const move = await fetchMove(moveUrl);
     let effect = document.getElementById('effect')
     effect.src = 'assets/attack.wav'
@@ -348,8 +353,8 @@ export class Battle{
                     this.attack_menu = false
                     this.arrow_posx = 1200
                     this.arrow_posy = 780
-                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[0].move.url);
-                    await performMove(this.ourStarter, this.enemy ,  this.enemy.moves[0].move.url);
+                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[0].move.url , 'pokemon1' , 'starter-translate');
+                    await performMove(this.enemy ,  this.ourStarter, this.enemy.moves[0].move.url , 'pokemon2' , 'enemy-translate');
                     setTimeout(()=>{
                         this.attack_menu = true
                         this.arrow_posx = 40
@@ -361,8 +366,8 @@ export class Battle{
                     this.attack_menu = false
                     this.arrow_posx = 1200
                     this.arrow_posy = 780
-                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[1].move.url);
-                    await performMove(this.ourStarter, this.enemy ,  this.enemy.moves[1].move.url);
+                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[1].move.url, 'pokemon1' , 'starter-translate');
+                    await performMove(this.enemy ,  this.ourStarter, this.enemy.moves[1].move.url, 'pokemon2' , 'enemy-translate');
                     setTimeout(()=>{
                         this.attack_menu = true
                         this.arrow_posx = 700
@@ -373,8 +378,8 @@ export class Battle{
                     this.attack_menu = false
                     this.arrow_posx = 1200
                     this.arrow_posy = 780
-                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[2].move.url);
-                    await performMove(this.ourStarter, this.enemy ,  this.enemy.moves[2].move.url);
+                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[2].move.url, 'pokemon1' , 'starter-translate');
+                    await performMove(this.enemy ,  this.ourStarter, this.enemy.moves[2].move.url, 'pokemon2' , 'enemy-translate');
                     setTimeout(()=>{
                         this.attack_menu = true
                         this.arrow_posx = 40
@@ -385,8 +390,8 @@ export class Battle{
                     this.attack_menu = false
                     this.arrow_posx = 1200
                     this.arrow_posy = 780
-                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[3].move.url);
-                    await performMove(this.ourStarter, this.enemy ,  this.enemy.moves[3].move.url);
+                    await performMove(this.ourStarter, this.enemy ,  this.ourStarter.moves[3].move.url, 'pokemon1', 'starter-translate');
+                    await performMove(this.enemy ,  this.ourStarter, this.enemy.moves[3].move.url, 'pokemon2' , 'enemy-translate');
                     setTimeout(()=>{
                         this.attack_menu = true
                         this.arrow_posx = 700

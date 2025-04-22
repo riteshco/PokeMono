@@ -9,4 +9,17 @@ body {
 
 img{
     height: 35rem;
+    transition: transform 0.5s ease-in-out;
 }
+
+.starter-translate{
+    transform: translate(100px , -100px);
+}
+  
+    
+
+.enemy-translate{
+    transform: translate(-100px , 100px);
+}
+
+  
