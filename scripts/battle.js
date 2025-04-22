@@ -44,6 +44,9 @@ function calculateDamage(level, power, attack, defense) {
 
 async function performMove(attacker, defender, moveUrl) {
     const move = await fetchMove(moveUrl);
+    let effect = document.getElementById('effect')
+    effect.src = 'assets/attack.wav'
+    effect.play()
 
     if (!move.power) {
         console.log(`${move.name} doesn't deal damage.`);
