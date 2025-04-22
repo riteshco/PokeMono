@@ -367,13 +367,6 @@ export class Game {
                 this.setupDone = true
             }
             this.battle.update();
-            // if(this.battle.scene === 'world'){
-            //     this.scene = 'world';          // switch back to world
-            //     this.setupDone = false;       // reset for next battle
-            //     this.audio.src = 'assets/town.mp3';
-            //     this.audio.play();
-            
-            // }
         }
     }
 

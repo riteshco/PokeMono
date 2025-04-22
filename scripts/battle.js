@@ -42,34 +42,6 @@ function calculateDamage(level, power, attack, defense) {
     return Math.floor(base * (0.85 + Math.random() * 0.15)); // random factor 0.85-1
 }
 
-async function performMove(attacker, defender, moveUrl , id , classToAdd) {
-    let moving = document.getElementById(id)
-    moving.classList.add(classToAdd)
-    setTimeout(()=>{
-        moving.classList.remove(classToAdd)
-    } , 1000)
-    const move = await fetchMove(moveUrl);
-    let effect = document.getElementById('effect')
-    effect.src = 'assets/attack.wav'
-    effect.play()
-
-    if (!move.power) {
-        console.log(`${move.name} doesn't deal damage.`);
-        return;
-    }
-
-    const attackStat = getStat(attacker.stats, "attack");
-    const defenseStat = getStat(defender.stats, "defense");
-
-    const damage = calculateDamage(50, move.power, attackStat, defenseStat);
-    defender.hp -= damage;
-    if (defender.hp < 0) defender.hp = 0;
-
-    console.log(`${attacker.name} used ${move.name}!`);
-    console.log(`${defender.name} took ${damage} damage!`);
-}
-
-
 
 
 
@@ -141,6 +113,10 @@ export class Battle{
         this.win = false
         this.lose = false
         // this.setup = false;
+
+        this.isperforming = false
+        this.attackerName = ''
+        this.moveused = ''
         
         
         this.update = this.update.bind(this);
@@ -149,6 +125,46 @@ export class Battle{
             this.update();
         }, 100);
     }
+
+
+    async performMove(attacker, defender, moveUrl , id , classToAdd) {
+        let moving = document.getElementById(id)
+        moving.classList.add(classToAdd)
+        setTimeout(()=>{
+            moving.classList.remove(classToAdd)
+        } , 1000)
+        const move = await fetchMove(moveUrl);
+        let effect = document.getElementById('effect')
+        effect.src = 'assets/attack.wav'
+        effect.play()
+    
+        if (!move.power) {
+            console.log(`${move.name} doesn't deal damage.`);
+            return;
+        }
+    
+        const attackStat = getStat(attacker.stats, "attack");
+        const defenseStat = getStat(defender.stats, "defense");
+    
+        const damage = calculateDamage(50, move.power, attackStat, defenseStat);
+        defender.hp -= damage;
+        if (defender.hp < 0) defender.hp = 0;
+
+        this.isperforming = true
+
+        this.attackerName = attacker.name
+        this.moveused = move.name
+        setTimeout(()=>{
+            this.isperforming = false
+        },2000)
+    
+            console.log(`${attacker.name} used ${move.name}!`);
+            console.log(`${defender.name} took ${damage} damage!`);
+    
+    }
+    
+
+
 
     endBattle() {
         this.battleOver = true;
@@ -274,7 +290,7 @@ export class Battle{
         }
         if(!this.animation_completed){
             this.ctx.fillText(`A wild ${this.pokename} appeared!`, this.canvas.width * 0.035, this.canvas.height * 0.83);
-        }else{
+        }else if (!this.isperforming){
             this.ctx.fillText(`GO ${this.starter_name}!!`, this.canvas.width * 0.035, this.canvas.height * 0.83);
         }
 
@@ -305,6 +321,11 @@ export class Battle{
         this.ctx.fillRect(this.canvas.width * 0.61, this.canvas.height * 0.635, this.canvas.width * 0.285, this.canvas.height * 0.07)
         this.ctx.fillStyle = "black"
         this.ctx.fillText(`HP : ${this.ourStarter.hp} / ${this.starterData.stats[0].base_stat}`, this.canvas.width * 0.62, this.canvas.height * 0.7)
+
+        if(this.isperforming){
+            this.ctx.fillStyle = "white"
+            this.ctx.fillText(`${this.attackerName} used ${this.moveused}!`, this.canvas.width * 0.035, this.canvas.height * 0.83);
+        }
 
         if(this.enemy.hp <= 0){
             this.win = true
@@ -372,61 +393,88 @@ export class Battle{
 
         window.addEventListener('keydown', async(e) => {
             if(e.key === 'Enter'){
-                if(this.arrow_posx === this.canvas.width * 0.625 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== ''){
+                if(this.arrow_posx === this.canvas.width * 0.625 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && !this.win && !this.lose){
                     this.arrow_posx = this.canvas.width * 0.02;
                     this.attack_menu = true
                 }
-                else if(this.arrow_posx === this.canvas.width * 0.805 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== ''){
+                else if(this.arrow_posx === this.canvas.width * 0.805 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== '' && !this.win && !this.lose){
                     this.endBattle()
                 }
-                else if(this.arrow_posx === this.canvas.width * 0.02 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && this.attack_menu === true){
+                else if(this.arrow_posx === this.canvas.width * 0.02 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && this.attack_menu === true && !this.win && !this.lose){
                     this.attack_menu = false
                     this.arrow_posx = this.canvas.width * 0.625
                     this.arrow_posy = this.canvas.height * 0.8
-                    await performMove(this.ourStarter, this.enemy, this.ourStarter.moves[0].move.url, 'pokemon1', 'starter-translate');
-                    await performMove(this.enemy, this.ourStarter, this.enemy.moves[0].move.url, 'pokemon2', 'enemy-translate');
-                    setTimeout(() => {
-                        this.attack_menu = true
-                        this.arrow_posx = this.canvas.width * 0.02
-                        this.arrow_posy = this.canvas.height * 0.8
-                    }, 2000)
+                    if(!this.win && !this.lose ){
+                    await this.performMove(this.ourStarter, this.enemy, this.ourStarter.moves[0].move.url, 'pokemon1', 'starter-translate' , this.ctx);
+                    setTimeout( async()=>{
+                        if(!this.win && !this.lose )
+                        await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[0].move.url, 'pokemon2', 'enemy-translate', this.ctx);
+                    } , 2000)
+
+                        setTimeout(() => {
+                            if(!this.win && !this.lose )
+                            this.attack_menu = true
+                            this.arrow_posx = this.canvas.width * 0.02
+                            this.arrow_posy = this.canvas.height * 0.8
+                        }, 4000)
+                    }
                 }
                 else if(this.arrow_posx === this.canvas.width * 0.35 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && this.attack_menu === true){
                     this.attack_menu = false
                     this.arrow_posx = this.canvas.width * 0.625
                     this.arrow_posy = this.canvas.height * 0.8
-                    await performMove(this.ourStarter, this.enemy, this.ourStarter.moves[1].move.url, 'pokemon1', 'starter-translate');
-                    await performMove(this.enemy, this.ourStarter, this.enemy.moves[1].move.url, 'pokemon2', 'enemy-translate');
+                    if(!this.win && !this.lose ){
+                    await this.performMove(this.ourStarter, this.enemy, this.ourStarter.moves[1].move.url, 'pokemon1', 'starter-translate', this.ctx);
+                    setTimeout( async()=>{
+                        if(!this.win && !this.lose )
+                        await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[1].move.url, 'pokemon2', 'enemy-translate', this.ctx);
+                    } , 2000)
+
                     setTimeout(() => {
+                        if(!this.win && !this.lose )
                         this.attack_menu = true
                         this.arrow_posx = this.canvas.width * 0.35
                         this.arrow_posy = this.canvas.height * 0.8
                     }, 2000)
                 }
+                }
                 else if(this.arrow_posx === this.canvas.width * 0.02 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== '' && this.attack_menu === true){
                     this.attack_menu = false
                     this.arrow_posx = this.canvas.width * 0.625
                     this.arrow_posy = this.canvas.height * 0.8
-                    await performMove(this.ourStarter, this.enemy, this.ourStarter.moves[2].move.url, 'pokemon1', 'starter-translate');
-                    await performMove(this.enemy, this.ourStarter, this.enemy.moves[2].move.url, 'pokemon2', 'enemy-translate');
+                    if(!this.win && !this.lose ){
+                    await this.performMove(this.ourStarter, this.enemy, this.ourStarter.moves[2].move.url, 'pokemon1', 'starter-translate', this.ctx);
+                    setTimeout( async()=>{
+                        if(!this.win && !this.lose )
+                        await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[2].move.url, 'pokemon2', 'enemy-translate', this.ctx);
+                    } , 2000)
                     setTimeout(() => {
+                        if(!this.win && !this.lose )
                         this.attack_menu = true
                         this.arrow_posx = this.canvas.width * 0.02
                         this.arrow_posy = this.canvas.height * 0.9
                     }, 2000)
                 }
+                }
                 else if(this.arrow_posx === this.canvas.width * 0.35 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== '' && this.attack_menu === true){
                     this.attack_menu = false
                     this.arrow_posx = this.canvas.width * 0.625
                     this.arrow_posy = this.canvas.height * 0.8
-                    await performMove(this.ourStarter, this.enemy, this.ourStarter.moves[3].move.url, 'pokemon1', 'starter-translate');
-                    await performMove(this.enemy, this.ourStarter, this.enemy.moves[3].move.url, 'pokemon2', 'enemy-translate');
+                    if(!this.win && !this.lose ){
+                    await this.performMove(this.ourStarter, this.enemy, this.ourStarter.moves[3].move.url, 'pokemon1', 'starter-translate', this.ctx);
+                    setTimeout( async()=>{
+                        if(!this.win && !this.lose )
+                        await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[3].move.url, 'pokemon2', 'enemy-translate', this.ctx);
+                    } , 2000)
+
                     setTimeout(() => {
+                        if(!this.win && !this.lose )
                         this.attack_menu = true
                         this.arrow_posx = this.canvas.width * 0.35
                         this.arrow_posy = this.canvas.height * 0.9
                     }, 2000)
                 }
+            }
             }
             if(e.key === 'b'){
                 this.arrow_posx = this.canvas.width * 0.625;
