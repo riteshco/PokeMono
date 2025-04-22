@@ -20,7 +20,8 @@ class Game {
         this.canvas.width = this.width;
         this.canvas.height = this.height;
 
-        this.ctx.font = "100px 'Press Start 2P', sans-serif";
+        this.ctx.font = `${Math.floor(this.height * 0.05)}px 'Press Start 2P', sans-serif`;
+
         this.ctx.fillStyle = "White";
 
         this.scene = 'world'
@@ -58,6 +59,28 @@ class Game {
         this.audio = document.getElementById('audio')
         this.audio.src = 'assets/town.mp3'
 
+        this.pokemonNames = [
+            "geodude", "mewtwo", "rhydon", "togepi", "cyndaquil", "golem", "arbok", "nidorino", "natu", "scyther",
+            "sunkern", "tentacool", "lanturn", "vileplume", "goldeen", "kingler", "bellossom", "rattata", "seadra", "butterfree",
+            "lickitung", "kabutops", "zapdos", "gastly", "marowak", "hoppip", "drowzee", "rhyhorn", "machoke", "hypno",
+            "slowking", "mr. mime", "mankey", "shellder", "nidoran♀", "wobbuffet", "clefairy", "pidgeotto", "sentret", "beedrill",
+            "hitmonchan", "mareep", "dewgong", "meganium", "poliwhirl", "seaking", "sudowoodo", "azumarill", "exeggcute", "muk",
+            "quilava", "doduo", "machop", "omanyte", "grimer", "victreebel", "ampharos", "machamp", "rapidash", "skiploom",
+            "togetic", "eevee", "jynx", "flaaffy", "crobat", "tentacruel", "dunsparce", "hoothoot", "dodrio", "psyduck",
+            "gloom", "graveler", "typhlosion", "tangela", "noctowl", "sandslash", "quilava", "slowbro", "ledyba", "magikarp",
+            "farfetch’d", "starmie", "umbreon", "misdreavus", "butterfree", "weedle", "clefable", "poliwrath", "aerodactyl", "exeggutor",
+            "kadabra", "omastar", "kangaskhan", "charizard", "togepi", "wooper", "togetic", "kabuto", "machamp", "primeape",
+            "charmeleon", "blastoise", "cleffa", "scyther", "ninetales", "gengar", "tentacool", "flaaffy", "wigglytuff", "azumarill",
+            "cloyster", "arcanine", "hypno", "vaporeon", "croconaw", "magnemite", "bellossom", "meowth", "sunflora", "jolteon",
+            "marowak", "diglett", "lapras", "nidoran♂", "hoothoot", "rapidash", "magneton", "alakazam", "seadra", "typhlosion",
+            "bayleef", "pikachu", "pinsir", "nidoqueen", "igglybuff", "ivysaur", "sentret", "butterfree", "cleffa", "clefairy",
+            "raichu", "dragonair", "muk", "victreebel", "snubbull", "chikorita", "wigglytuff", "hitmonchan", "jolteon", "marill",
+            "weezing", "arbok", "wartortle", "hitmonlee", "rattata", "chinchou", "feraligatr", "forretress", "machop", "haunter",
+            "charizard", "pidgeotto", "espeon", "misdreavus", "gastly", "persian", "electrode", "jynx", "krabby", "starmie",
+            "staryu", "kadabra", "exeggcute", "charmeleon", "togepi", "alakazam", "lickitung", "nidoqueen", "poliwhirl", "snorlax",
+            "poliwag", "porygon", "dragonite", "fearow", "pidgeot", "magneton", "jigglypuff", "sandslash", "bulbasaur", "kakuna"
+          ];
+        this.randomStarter = 'groudon'
 
     }
 
@@ -286,7 +309,7 @@ class Game {
                 else if(this.dialog === 1){
                     this.ctx.fillText('Pikachu' , this.width * (0.25) ,  this.height*(0.8) + 85)
                     this.ctx.fillText('Rayquaza' , this.width * (0.45) ,  this.height*(0.8) + 85)
-                    this.ctx.fillText('Groudon' , this.width * (0.65) ,  this.height*(0.8) + 85)
+                    this.ctx.fillText('Random' , this.width * (0.65) ,  this.height*(0.8) + 85)
                     this.menus.draw(269 , 3.9 , 5 , 9.2 , this.arrow_posx , this.arrow_posy ,50,50);
                 }
                 else if(this.dialog === 2){
@@ -367,9 +390,11 @@ class Game {
                         this.players.has_starter = true
                     }
                     if(this.arrow_posx === this.width * (0.65) - 60){
-                        this.starter_name = 'groudon'
-                        this.battle.starter_name = 'groudon'
-                        await this.dataGet('groudon');
+                        let randint = Math.floor(Math.random() * 199.99)
+                        this.randomStarter = this.pokemonNames[randint]
+                        this.starter_name = this.randomStarter
+                        this.battle.starter_name = this.randomStarter
+                        await this.dataGet(this.randomStarter);
                         this.battle.starterData = this.data
                         this.players.has_starter = true
                     }

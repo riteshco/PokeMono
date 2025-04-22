@@ -138,6 +138,7 @@ export class Battle{
         this.arrow_posy = 780;
 
         this.win = false
+        this.lose = false
         // this.setup = false;
         
         
@@ -302,10 +303,23 @@ export class Battle{
         else{
             this.win = false
         }
+        if(this.ourStarter.hp <=0){
+            this.lose = true
+        }
+        else{
+            this.lose = false
+        }
 
         if(this.win){
             this.menus.draw(299 , 6 , 156 , 43 , this.width*(0.2), this.height * (0.25), this.width * (0.6) ,  this.height*(0.5));
             this.ctx.fillText(`Congrats, You won` , this.width*(0.4) , this.height*(0.45))
+            setTimeout(()=>{
+                this.ctx.clearRect(0,0,window.innerWidth , window.innerHeight);
+                this.scene = 'world'
+            } , 3000)
+        }if(this.lose){
+            this.menus.draw(299 , 6 , 156 , 43 , this.width*(0.2), this.height * (0.25), this.width * (0.6) ,  this.height*(0.5));
+            this.ctx.fillText(`Ahh! You Lost!` , this.width*(0.4) , this.height*(0.45))
             setTimeout(()=>{
                 this.ctx.clearRect(0,0,window.innerWidth , window.innerHeight);
                 this.scene = 'world'
