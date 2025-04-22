@@ -55,6 +55,9 @@ class Game {
         this.arrow_posx = this.width * (0.25) - 60
         this.arrow_posy = this.height*(0.8) + 50
 
+        this.audio = document.getElementById('audio')
+        this.audio.src = 'assets/town.mp3'
+
 
     }
 
@@ -391,6 +394,7 @@ class Game {
             }
         }
 
+        this.audio.play()
 
     }
 }
@@ -419,9 +423,13 @@ window.addEventListener('load' , async function(){
 
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
+
+    let myAudio = document.getElementById('audio')
     
 
     if(!IntroDone){
+        myAudio.src = 'assets/opening.mp3'
+        myAudio.play()
         await IntroShow(ctx , 'assets/image1.png')
         await IntroShow(ctx , 'assets/image2.png')
         await IntroShow(ctx , 'assets/image3.png')
@@ -430,6 +438,7 @@ window.addEventListener('load' , async function(){
             if(!IntroDone && e.key === 'Enter'){
                 ctx.clearRect(0,0,window.innerWidth , window.innerHeight)
                 IntroDone = true
+                myAudio.pause()
                 const game = new Game(canvas , ctx);
         
                 game.render();

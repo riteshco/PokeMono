@@ -184,6 +184,8 @@ export class Player {
             if (this.isInBushes(this.x, this.y)) {
 
                 this.selectRandomPokemon();
+                this.game.audio.src = 'assets/battle.mp3'
+                this.game.audio.play()
 
                 this.fetchData(this.pokename)
                     .then(()=>{this.game.scene = 'battle'});

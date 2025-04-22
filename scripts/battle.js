@@ -88,7 +88,19 @@ export class Battle{
         this.starterData = '';
 
 
-        this.randomPokemons = ['pikachu' , 'bulbasaur' , 'charmander' , 'arceus']
+        this.randomPokemons =[
+            "bulbasaur", "ivysaur", "venusaur", "charmander", "charmeleon", "charizard", "squirtle", "wartortle", "blastoise",
+            "caterpie", "metapod", "butterfree", "weedle", "kakuna", "beedrill", "pidgey", "pidgeotto", "pidgeot", "rattata",
+            "raticate", "spearow", "fearow", "ekans", "arbok", "pikachu", "raichu", "sandshrew", "sandslash", "nidoran-f",
+            "nidorina", "nidoqueen", "nidoran-m", "nidorino", "nidoking", "clefairy", "clefable", "vulpix", "ninetales",
+            "jigglypuff", "wigglytuff", "zubat", "golbat", "oddish", "gloom", "vileplume", "paras", "parasect", "venonat",
+            "venomoth", "diglett", "dugtrio", "meowth", "persian", "psyduck", "golduck", "mankey", "primeape", "growlithe",
+            "arcanine", "poliwag", "poliwhirl", "poliwrath", "abra", "kadabra", "alakazam", "machop", "machoke", "machamp",
+            "bellsprout", "weepinbell", "victreebel", "tentacool", "tentacruel", "geodude", "graveler", "golem", "ponyta",
+            "rapidash", "slowpoke", "slowbro", "magnemite", "magneton", "farfetchd", "doduo", "dodrio", "seel", "dewgong",
+            "grimer", "muk", "shellder", "cloyster", "gastly", "haunter", "gengar", "onix", "drowzee", "hypno", "krabby",
+            "kingler", "voltorb", "electrode", "rayquaza", "arceus"
+          ];
         this.pokename = 'pikachu'
         this.starter_name = ''
 
@@ -148,19 +160,11 @@ export class Battle{
     }
 
     selectRandomPokemon(){
-        let randNum = Math.random();
-        if( randNum <= 0.25){
-            this.pokename = this.randomPokemons[0]
+        let randInt = Math.floor(Math.random() * 100);
+        if(randInt === 100){
+            randInt = 99
         }
-        else if (randNum <=0.5){
-            this.pokename = this.randomPokemons[1]
-        }
-        else if (randNum <=0.75){
-            this.pokename = this.randomPokemons[2]
-        }
-        else {
-            this.pokename = this.randomPokemons[3]
-        }
+        this.pokename = this.randomPokemons[randInt]
     }
 
     async setup(){
