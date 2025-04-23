@@ -218,6 +218,15 @@ export class Player {
             }
         }
         if (this.keys["l"] || this.keys["a"]) {
+            let easter = document.getElementById('easter')
+            if(this.keys["l"]){
+                easter.src = 'assets/MJ.mp3'
+                easter.play()
+            }
+            else{
+                easter.pause()
+                easter.src = ""
+            }
             if (!this.isColliding(this.x - 2, this.y)) {
 
                 if (this.x > this.game.scale * 1.25 && this.x < Math.floor(this.game.width - 1 / this.game.scale) * this.game.scale) {
@@ -226,6 +235,15 @@ export class Player {
             }
         }
         if (this.keys["j"] || this.keys["d"]) {
+            let easter = document.getElementById('easter')
+            if(this.keys["j"]){
+                easter.src = 'assets/MJ.mp3'
+                easter.play()
+            }
+            else{
+                easter.pause()
+                easter.src = ""
+            }
             if (!this.isColliding(this.x + 2, this.y)) {
                 if (this.x > this.game.scale * 1.20 && this.x < (Math.floor(this.game.width / this.game.scale) - 2) * this.game.scale) {
                     if (this.y <= Math.floor(this.game.height * (0.65) / this.game.scale) * this.game.scale) {

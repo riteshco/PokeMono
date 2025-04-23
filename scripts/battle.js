@@ -83,6 +83,16 @@ export class Battle {
         ];
         this.pokename = 'pikachu'
         this.starter_name = ''
+        
+        this.secondStarter = ''
+        this.thirdStarter = ''
+
+        this.secondStarterData = ''
+        this.thirdStarterData = ''
+
+        this.currentPokemon = ''
+        this.currentData = ''
+        this.currentName = ''
 
         this.scale = 48;
 
@@ -100,10 +110,6 @@ export class Battle {
         this.sprites_animation3 = new Object(this, 'assets/player_3.png')
         this.sprites_animation4 = new Object(this, 'assets/player_4.png')
 
-        // this.img = new Image();
-        // this.imgReady = false;
-
-        // this.data = ''
 
         this.keys = {}
         this.arrow_posx = this.canvas.width * 0.625;
@@ -206,7 +212,7 @@ export class Battle {
         this.pokeimg2.style.display = 'block'
 
 
-        this.ourStarter = await fetchPokemonStat(this.starterData);
+        this.ourStarter = await fetchPokemonStat(this.currentData);
         this.enemy = await fetchPokemonStat(this.data);
 
         this.ourStarter.hp = getStat(this.ourStarter.stats, "hp");
@@ -246,7 +252,7 @@ export class Battle {
         }
 
         if (this.animation_completed) {
-            this.pokeimg1.src = this.starterData.sprites.back_default
+            this.pokeimg1.src = this.currentData.sprites.back_default
             this.pokeimg1.style.display = 'block'
         }
 
@@ -291,7 +297,7 @@ export class Battle {
         if (!this.animation_completed) {
             this.ctx.fillText(`A wild ${this.pokename} appeared!`, this.canvas.width * 0.035, this.canvas.height * 0.83);
         } else if (!this.isperforming) {
-            this.ctx.fillText(`GO ${this.starter_name}!!`, this.canvas.width * 0.035, this.canvas.height * 0.83);
+            this.ctx.fillText(`GO ${this.currentName}!!`, this.canvas.width * 0.035, this.canvas.height * 0.83);
         }
 
         this.menus.draw(4, 3, 91, 29, this.canvas.width * 0.2, this.canvas.height * 0.09, this.canvas.width * 0.24, this.canvas.height * 0.14) // Enemy stats
@@ -304,7 +310,7 @@ export class Battle {
 
         if (this.attack_menu) {
             this.menus.draw(297, 3.9, 159, 48, 0, this.canvas.height * 0.74, this.canvas.width * 0.6, this.canvas.height * 0.27);
-            const moveNames = this.starterData.moves.slice(0, 4).map(m => m.move.name)
+            const moveNames = this.currentData.moves.slice(0, 4).map(m => m.move.name)
             this.ctx.fillStyle = "black"
             this.ctx.fillText(`${moveNames[0]}`, this.canvas.width * 0.05, this.canvas.height * 0.84);
             this.ctx.fillText(`${moveNames[1]}`, this.canvas.width * 0.38, this.canvas.height * 0.84);
@@ -320,7 +326,7 @@ export class Battle {
         this.ctx.fillStyle = "white"
         this.ctx.fillRect(this.canvas.width * 0.61, this.canvas.height * 0.635, this.canvas.width * 0.285, this.canvas.height * 0.07)
         this.ctx.fillStyle = "black"
-        this.ctx.fillText(`HP : ${this.ourStarter.hp} / ${this.starterData.stats[0].base_stat}`, this.canvas.width * 0.62, this.canvas.height * 0.7)
+        this.ctx.fillText(`HP : ${this.ourStarter.hp} / ${this.currentData.stats[0].base_stat}`, this.canvas.width * 0.62, this.canvas.height * 0.7)
 
         if (this.isperforming) {
             this.ctx.fillStyle = "white"
@@ -411,10 +417,16 @@ export class Battle {
                             else if (this.arrow_posx >= this.canvas.width * 0.7 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && !this.win && !this.lose) {
                                 this.bagOpen =true
                                 this.bag.style.display = 'block'
+                                let instructions = document.getElementById('PokelistInstruction')
+
+                                instructions.innerHTML = 'Press "B" to go back!'
                             }
                             else if (this.arrow_posx === this.canvas.width * 0.625 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== '' && !this.win && !this.lose) {
                                 this.pokeSelect = true
                                 this.selectPokemon.style.display = 'block'
+                                let instructions = document.getElementById('PokelistInstruction')
+                                
+                                instructions.innerHTML = `Press "F" to select 1.)${this.starter_name} , "G" for 2.) ${this.secondStarter} and "H" to select 3.) ${this.thirdStarter} and Press "B" to go back!`
                             }
                             else if (this.arrow_posx >= this.canvas.width * 0.7 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== '' && !this.win && !this.lose) {
                                 setTimeout(() => {
@@ -545,11 +557,35 @@ export class Battle {
                 }
                 }
                 else if (this.bagOpen || this.pokeSelect) {
+
+                    let instructions = document.getElementById('PokelistInstruction')
                     if (e.key === 'b') {
                         this.bag.style.display = 'none'
                         this.bagOpen = false
                         this.selectPokemon.style.display = 'none'
                         this.pokeSelect = false
+                        
+                        instructions.innerHTML = ''
+                    }
+                    if(this.pokeSelect){
+
+                        if (e.key === 'f'){
+                            this.currentData = this.starterData
+                            this.currentName = this.starter_name
+                            await this.setup()
+                        }
+                        else if(e.key === 'g'){
+                            this.currentData = this.secondStarterData
+                            this.currentName = this.secondStarter
+                            await this.setup()
+                        }
+                        else if(e.key === 'h'){
+                            this.currentData = this.thirdStarterData
+                            this.currentName = this.thirdStarter
+                            console.log(this.thirdStarterData)
+                            console.log(this.currentName)
+                            await this.setup()
+                        }
                     }
                 }
             if (e.key === 'b') {

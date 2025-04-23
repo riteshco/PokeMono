@@ -44,6 +44,8 @@ export class Game {
 
         this.update = this.update.bind(this);
         this.data = ''
+        this.data2 = ''
+        this.data3 = ''
 
         this.setupDone = false
 
@@ -81,9 +83,9 @@ export class Game {
             "poliwag", "porygon", "dragonite", "fearow", "pidgeot", "magneton", "jigglypuff", "sandslash", "bulbasaur", "kakuna"
           ];
         this.randomStarter = 'groudon'
-
         
 
+        
     }
 
     render() {
@@ -326,7 +328,48 @@ export class Game {
                 }
                 else if(this.dialog === 2){
                     this.ctx.fillText(`You Chose ${this.starter_name}!` , this.width * (0.25) ,  this.height*(0.8) + 85)
+                    setTimeout(()=>{
+                        this.dialog = 3;
+                    },500)
                 }
+                else if(this.dialog === 3){
+                    this.ctx.fillText('Choose your Second Pokemon --- ' , this.width * (0.2) + 40,  this.height*(0.8) + 60)
+                    this.ctx.fillText('Press ENTER!! ' , this.width * (0.2) + 40,  this.height*(0.8) + 100)
+                }
+                else if(this.dialog === 4){
+                    this.ctx.fillText('Darkrai' , this.width * (0.25) ,  this.height*(0.8) + 85)
+                    this.ctx.fillText('Charizard' , this.width * (0.45) ,  this.height*(0.8) + 85)
+                    this.ctx.fillText('Random' , this.width * (0.65) ,  this.height*(0.8) + 85)
+                    this.menus.draw(269 , 3.9 , 5 , 9.2 , this.arrow_posx , this.arrow_posy ,50,50);
+                }          
+                else if(this.dialog === 5){
+                    this.ctx.fillText(`You Chose ${this.battle.secondStarter}!` , this.width * (0.25) ,  this.height*(0.8) + 85)
+                    setTimeout(()=>{
+                        this.dialog = 6;
+                    },500)
+                }
+                else if(this.dialog === 6){
+                    this.ctx.fillText('Choose your Third Pokemon --- ' , this.width * (0.2) + 40,  this.height*(0.8) + 60)
+                    this.ctx.fillText('Press ENTER!! ' , this.width * (0.2) + 40,  this.height*(0.8) + 100)
+                }
+                else if(this.dialog === 7){
+                    this.ctx.fillText('Squirtle' , this.width * (0.25) ,  this.height*(0.8) + 85)
+                    this.ctx.fillText('Chikorita' , this.width * (0.45) ,  this.height*(0.8) + 85)
+                    this.ctx.fillText('Random' , this.width * (0.65) ,  this.height*(0.8) + 85)
+                    this.menus.draw(269 , 3.9 , 5 , 9.2 , this.arrow_posx , this.arrow_posy ,50,50);
+                }
+                else if(this.dialog === 8){
+                    this.ctx.fillText(`You Chose ${this.battle.thirdStarter}!` , this.width * (0.25) ,  this.height*(0.8) + 85)
+                    setTimeout(()=>{
+                        this.dialog = 9;
+                    },500)
+                }
+                else if(this.dialog === 9){
+                    this.ctx.fillText(`You Chose all three!` , this.width * (0.25) ,  this.height*(0.8) + 85)
+                }
+
+
+
             }
 
                 
@@ -355,6 +398,42 @@ export class Game {
             hideLoadingScreen();
         }
     }
+    async dataGet2(name) {
+        showLoadingScreen();
+        try {
+            const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+    
+            if (!response.ok) {
+                throw new Error("Couldn't fetch resource")
+            }
+    
+            const data = await response.json();
+            this.data2 = data;
+    
+            hideLoadingScreen();
+        } catch (error) {
+            console.error(error);
+            hideLoadingScreen();
+        }
+    }
+    async dataGet3(name) {
+        showLoadingScreen();
+        try {
+            const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+    
+            if (!response.ok) {
+                throw new Error("Couldn't fetch resource")
+            }
+    
+            const data = await response.json();
+            this.data3 = data;
+    
+            hideLoadingScreen();
+        } catch (error) {
+            console.error(error);
+            hideLoadingScreen();
+        }
+    }
 
     async update() {
         if(this.scene === 'world'){
@@ -365,15 +444,12 @@ export class Game {
         }
         else if(this.scene === 'battle'){
             if(!this.setupDone){
+                this.battle.currentData = this.battle.starterData
+                this.battle.currentName = this.battle.starter_name
                 await this.battle.setup()
                 this.setupDone = true
             }
             this.battle.update();
-            // if(this.battle.win || this.battle.lose){
-            //     this.scene = 'world'
-            //     console.log('world')
-            //     requestAnimationFrame(this.update); // To loop again and again
-            // }
         }
     }
 
@@ -383,6 +459,16 @@ export class Game {
                 if(this.players.x >=940 && this.players.x <=999 && this.players.y >= 660 && this.players.y <= 690 && this.dialog ===0){
                     setTimeout(()=>{
                         this.dialog = 1;
+                    }, 200)
+                }
+                if(this.players.x >=940 && this.players.x <=999 && this.players.y >= 660 && this.players.y <= 690 && this.dialog ===3){
+                    setTimeout(()=>{
+                        this.dialog = 4;
+                    }, 200)
+                }
+                if(this.players.x >=940 && this.players.x <=999 && this.players.y >= 660 && this.players.y <= 690 && this.dialog ===6){
+                    setTimeout(()=>{
+                        this.dialog = 7;
                     }, 200)
                 }
                 if(this.players.x >=940 && this.players.x <=999 && this.players.y >= 660 && this.players.y <= 690 && this.dialog ===1){
@@ -412,6 +498,50 @@ export class Game {
                         this.players.has_starter = true
                     }
                 },200)
+                }
+                if(this.players.x >=940 && this.players.x <=999 && this.players.y >= 660 && this.players.y <= 690 && this.dialog ===4){
+                    setTimeout(async()=>{
+                        this.dialog = 5;
+                        if(this.arrow_posx === this.width * (0.25) - 60){
+                            this.battle.secondStarter = 'darkrai'
+                            await this.dataGet2('darkrai');
+                            this.battle.secondStarterData = this.data2
+                        }
+                        if(this.arrow_posx === this.width * (0.45) - 60){
+                            this.battle.secondStarter = 'charizard'
+                            await this.dataGet2('charizard');
+                            this.battle.secondStarterData = this.data2
+                        }
+                        if(this.arrow_posx === this.width * (0.65) - 60){
+                            let randint = Math.floor(Math.random() * 199.99)
+                            this.randomStarter = this.pokemonNames[randint]
+                            this.battle.secondStarter = this.randomStarter
+                            await this.dataGet2(this.randomStarter);
+                            this.battle.secondStarterData = this.data2
+                        }
+                    },200)
+                }
+                if(this.players.x >=940 && this.players.x <=999 && this.players.y >= 660 && this.players.y <= 690 && this.dialog ===7){
+                    setTimeout(async()=>{
+                        this.dialog = 8;
+                        if(this.arrow_posx === this.width * (0.25) - 60){
+                            this.battle.thirdStarter = 'squirtle'
+                            await this.dataGet3('squirtle');
+                            this.battle.thirdStarterData = this.data3
+                        }
+                        if(this.arrow_posx === this.width * (0.45) - 60){
+                            this.battle.thirdStarter = 'chikorita'
+                            await this.dataGet3('chikorita');
+                            this.battle.thirdStarterData = this.data3
+                        }
+                        if(this.arrow_posx === this.width * (0.65) - 60){
+                            let randint = Math.floor(Math.random() * 199.99)
+                            this.randomStarter = this.pokemonNames[randint]
+                            this.battle.thirdStarter = this.randomStarter
+                            await this.dataGet3(this.randomStarter);
+                            this.battle.thirdStarterData = this.data3
+                        }
+                    },200)
                 }
             }
             if(e.key === 'ArrowLeft'){
