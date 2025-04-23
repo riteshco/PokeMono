@@ -82,6 +82,8 @@ export class Game {
           ];
         this.randomStarter = 'groudon'
 
+        
+
     }
 
     render() {
@@ -356,7 +358,7 @@ export class Game {
 
     async update() {
         if(this.scene === 'world'){
-
+            this.setupDone = false
             this.players.update();
             this.render();
             requestAnimationFrame(this.update); // To loop again and again
@@ -367,16 +369,17 @@ export class Game {
                 this.setupDone = true
             }
             this.battle.update();
+            // if(this.battle.win || this.battle.lose){
+            //     this.scene = 'world'
+            //     console.log('world')
+            //     requestAnimationFrame(this.update); // To loop again and again
+            // }
         }
     }
 
     controls(){
         window.onkeydown = (e)=>{
             if(e.key === 'Enter'){
-                if(this.battle.arrow_posx === 1560 && this.battle.arrow_posy === 860){
-                    this.scene = 'world'
-                    // console.log(this.scene)
-                }
                 if(this.players.x >=940 && this.players.x <=999 && this.players.y >= 660 && this.players.y <= 690 && this.dialog ===0){
                     setTimeout(()=>{
                         this.dialog = 1;
@@ -478,6 +481,7 @@ window.addEventListener('load' , async function(){
                 IntroDone = true
                 myAudio.pause()
                 const game = new Game(canvas , ctx);
+                window.game = game;
         
                 game.render();
                 game.players.setup();
@@ -491,6 +495,7 @@ window.addEventListener('load' , async function(){
     }
     else{
         const game = new Game(canvas , ctx);
+        window.game = game;
         
         game.render();
         game.players.setup();
