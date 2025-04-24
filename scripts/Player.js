@@ -34,10 +34,7 @@ export class Player {
 
 
         this.colliders = [
-            // Building 1 at (240, 462) with size 240x210
             { x: 240, y: 462, width: 240, height: 190 },
-
-            // Building 2 at (810, 414) with size 336x270
             { x: 820, y: 414, width: 320, height: 246 },
 
         ];
@@ -192,8 +189,6 @@ export class Player {
 
             }
         }
-        // 951 660
-        // console.log(this.x , this.y)
         if(!this.isInBushes(this.x,this.y) || !this.has_starter){
 
             
@@ -265,7 +260,7 @@ export class Player {
         if (Object.values(this.keys).some(v => v)) {
             this.animationTime++;
         } else {
-            this.animationTime = 0; // Reset on idle
+            this.animationTime = 0;
         }
     }
     }

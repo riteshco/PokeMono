@@ -36,3 +36,15 @@ img{
     width: 20vw;
     height:15vh;
 }
+#mobile-warning {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: red;
+    color: white;
+    width: 100%;
+    padding: 1rem;
+    text-align: center;
+    font-weight: bold;
+    z-index: 9999;
+  }

@@ -86,25 +86,25 @@ export class Game {
 
             // --- Rendering paths ---
             for (let i = 0; i < Math.floor(this.width / this.scale) * (0.6); ++i) {
-                this.assets.draw(147.4, 50.3, 7.3, 7.3, 48 * i, 672, 48, 48) //path with top border
-                this.assets.draw(138.4, 59.3, 7.3, 7.3, 48 * i, 720, 48, 48) //mid path
-                this.assets.draw(156.4, 59.3, 7.3, 7.3, 48 * i, 768, 48, 48) //mid path 2
-                this.assets.draw(147.4, 68.3, 7.3, 7.3, 48 * i, 816, 48, 48) //path with bottom border
+                this.assets.draw(147.4, 50.3, 7.3, 7.3, 48 * i, 672, 48, 48)
+                this.assets.draw(138.4, 59.3, 7.3, 7.3, 48 * i, 720, 48, 48)
+                this.assets.draw(156.4, 59.3, 7.3, 7.3, 48 * i, 768, 48, 48)
+                this.assets.draw(147.4, 68.3, 7.3, 7.3, 48 * i, 816, 48, 48)
             }
             this.assets.draw(147.4, 50.3, 7.3, 7.3, (this.width) * 0.6, 672, 48, 48)
             this.assets.draw(147.4, 50.3, 7.3, 7.3, (this.width) * 0.6 + this.scale, 672, 48, 48)
-            this.assets.draw(165.4, 50.3, 7.3, 7.3, (this.width) * 0.6 + 2 * this.scale, 672, 48, 48) //path with top right diagonal border
-            this.assets.draw(156.4, 50.3, 7.3, 7.3, (this.width) * 0.6 + 2 * this.scale, 672 + this.scale, 48, 48) //path with semi top right diagonal border
+            this.assets.draw(165.4, 50.3, 7.3, 7.3, (this.width) * 0.6 + 2 * this.scale, 672, 48, 48)
+            this.assets.draw(156.4, 50.3, 7.3, 7.3, (this.width) * 0.6 + 2 * this.scale, 672 + this.scale, 48, 48)
             this.assets.draw(165.4, 50.3, 7.3, 7.3, (this.width) * 0.6 + 3 * this.scale, 672 + this.scale, 48, 48)
             for (let i = Math.floor(this.height / this.scale) * (0.8); i < Math.floor(this.height / this.scale) + 2; ++i) {
-                this.assets.draw(165.4, 59.3, 7.3, 7.3, (this.width) * 0.6 + 3 * this.scale, 48 * i, 48, 48) //path with right border
+                this.assets.draw(165.4, 59.3, 7.3, 7.3, (this.width) * 0.6 + 3 * this.scale, 48 * i, 48, 48)
                 this.assets.draw(138.4, 59.3, 7.3, 7.3, (this.width) * 0.6 + 2 * this.scale, 48 * i, 48, 48)
                 this.assets.draw(156.4, 59.3, 7.3, 7.3, (this.width) * 0.6 + 1 * this.scale, 48 * (i - 1), 48, 48)
             }
             this.assets.draw(138.4, 59.3, 7.3, 7.3, (this.width) * 0.6, 48 * (Math.floor(this.height / this.scale) * (0.8) - 1), 48, 48)
             this.assets.draw(138.4, 59.3, 7.3, 7.3, (this.width) * 0.6, 48 * (Math.floor(this.height / this.scale) * (0.8)), 48, 48)
             this.assets.draw(138.4, 59.3, 7.3, 7.3, (this.width) * 0.6, 48 * (Math.floor(this.height / this.scale) * (0.8) + 1), 48, 48)
-            this.assets.draw(129.4, 59.3, 7.3, 7.3, (this.width) * 0.6, 48 * (Math.floor(this.height / this.scale) * (0.8) + 2), 48, 48) //path with left border
+            this.assets.draw(129.4, 59.3, 7.3, 7.3, (this.width) * 0.6, 48 * (Math.floor(this.height / this.scale) * (0.8) + 2), 48, 48)
             this.assets.draw(129.4, 59.3, 7.3, 7.3, (this.width) * 0.6, 48 * (Math.floor(this.height / this.scale) * (0.8) + 3), 48, 48)
             this.assets.draw(129.4, 59.3, 7.3, 7.3, (this.width) * 0.6, 48 * (Math.floor(this.height / this.scale) * (0.8) + 4), 48, 48)
 
@@ -355,7 +355,7 @@ export class Game {
             this.setupDone = false
             this.players.update();
             this.render();
-            requestAnimationFrame(this.update); // To loop again and again
+            requestAnimationFrame(this.update);
         }
         else if (this.scene === 'battle') {
             if (!this.setupDone) {
@@ -511,6 +511,9 @@ async function IntroShow(ctx, path) {
 
 
 window.addEventListener('load', async function () {
+    if (window.innerWidth < 768) {  // adjust threshold if needed
+        document.getElementById('mobile-warning').style.display = 'block';
+      }
     const canvas = document.getElementById('map');
     const ctx = canvas.getContext('2d');
 

@@ -11,7 +11,7 @@ export class Utils{
 
     calculateDamage(level, power, attack, defense) {
         const base = (((2 * level) / 10 + 2) * power * (attack / defense)) / 50 + 2;
-        return Math.floor(base * (0.85 + Math.random() * 0.15)); // random factor 0.85-1
+        return Math.floor(base * (0.85 + Math.random() * 0.15));
     }
 
     async fetchPokemonStat(data) {
@@ -32,7 +32,7 @@ export class Utils{
         const moveData = await res.json();
         return {
             name: moveData.name,
-            power: moveData.power, // can be null!
+            power: moveData.power,
             accuracy: moveData.accuracy,
             type: moveData.type.name
         };

@@ -76,7 +76,6 @@ export class Battle {
         this.win = false
         this.lose = false
         this.run = false
-        // this.setup = false;
 
 
         this.bag = document.getElementById('bag')
@@ -158,7 +157,6 @@ export class Battle {
     async setup() {
         this.selectRandomPokemon()
         this.data = await this.utils.dataGet(this.pokename)
-        // console.log(this.data)
         this.pokeimg2.src = this.data.sprites.front_default
         this.pokeimg2.style.display = 'block'
 
@@ -251,7 +249,7 @@ export class Battle {
             this.ctx.fillText(`GO ${this.currentName}!!`, this.canvas.width * 0.035, this.canvas.height * 0.83);
         }
 
-        this.menus.draw(4, 3, 91, 29, this.canvas.width * 0.2, this.canvas.height * 0.09, this.canvas.width * 0.24, this.canvas.height * 0.14) // Enemy stats
+        this.menus.draw(4, 3, 91, 29, this.canvas.width * 0.2, this.canvas.height * 0.09, this.canvas.width * 0.24, this.canvas.height * 0.14)
         this.ctx.fillStyle = "black"
         this.ctx.fillText(`${this.pokename}`, this.canvas.width * 0.22, this.canvas.height * 0.14)
         this.ctx.fillStyle = "red"
@@ -271,9 +269,9 @@ export class Battle {
             this.ctx.fillText(`${moveNames[3]}`, this.canvas.width * 0.38, this.canvas.height * 0.94);
         }
 
-        this.menus.draw(269, 3.9, 5, 9.2, this.arrow_posx, this.arrow_posy, this.canvas.width * 0.025, this.canvas.height * 0.05);//arrow
+        this.menus.draw(269, 3.9, 5, 9.2, this.arrow_posx, this.arrow_posy, this.canvas.width * 0.025, this.canvas.height * 0.05);
 
-        this.menus.draw(12, 45, 91, 36, this.canvas.width * 0.6, this.canvas.height * 0.58, this.canvas.width * 0.3, this.canvas.height * 0.15) // Our Starter stats
+        this.menus.draw(12, 45, 91, 36, this.canvas.width * 0.6, this.canvas.height * 0.58, this.canvas.width * 0.3, this.canvas.height * 0.15)
         this.ctx.fillStyle = "black"
         this.ctx.fillText(`${this.currentName}`, this.canvas.width * 0.62, this.canvas.height * 0.63)
         this.ctx.fillStyle = "red"
@@ -497,7 +495,7 @@ export class Battle {
     update() {
         if (!this.win && !this.lose && !this.run) {
             this.render();
-            requestAnimationFrame(this.update); // To loop again and again
+            requestAnimationFrame(this.update);
         }
         else {
             setTimeout(() => {
