@@ -20,7 +20,7 @@ export class Battle {
         this.utils = new Utils()
 
 
-        this.ctx.font = "1.8rem 'Press Start 2P', sans-serif";
+        this.ctx.font = `${Math.floor(this.height * 0.05)/30}rem 'Press Start 2P', sans-serif`;
         this.ctx.fillStyle = "white";
 
         this.data = '';
