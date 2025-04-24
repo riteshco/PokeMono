@@ -21,7 +21,7 @@ export class Game {
         this.canvas.width = this.width;
         this.canvas.height = this.height;
 
-        this.ctx.font = `${Math.floor(this.height * 0.05)}px 'Press Start 2P', sans-serif`;
+        this.ctx.font = `${Math.floor(this.height * 0.05)}rem 'Press Start 2P', sans-serif`;
 
         this.ctx.fillStyle = "White";
 
@@ -530,7 +530,7 @@ window.addEventListener('load', async function () {
         await IntroShow(ctx, 'assets/image2.png')
         await IntroShow(ctx, 'assets/image3.png')
         await IntroShow(ctx, 'assets/image4.png')
-        ctx.font = `${Math.floor(canvas.height * 0.05)}px 'Press Start 2P', sans-serif`
+        ctx.font = `${Math.floor(canvas.height * 0.05)/20}rem 'Press Start 2P', sans-serif`
         ctx.fillStyle = 'White'
         ctx.fillText('Press ENTER to start!!', canvas.width * (0.02), canvas.height * (0.77))
         window.addEventListener('keydown', (e) => {
