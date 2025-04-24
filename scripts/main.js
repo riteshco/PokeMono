@@ -139,7 +139,7 @@ export class Game {
 
             // --- Rendering Player ---
             let frame = Math.floor(this.players.animationTime / 20) % 3;
-            if (this.players.keys["ArrowDown"] || this.players.keys["s"]) {
+            if (this.players.keys["s"]) {
                 this.players.direction = 'down';
                 if (frame === 0) {
                     this.players.render(25.3, 49.8, 15.49, 24, 46.5, 72);
@@ -175,7 +175,7 @@ export class Game {
                     this.players.render(42.3, 114.8, 15.49, 24, 46.5, 72);
                 }
             }
-            else if (this.players.keys["ArrowUp"] || this.players.keys["w"]) {
+            else if (this.players.keys["w"]) {
                 this.players.direction = 'up';
                 if (frame === 0) {
                     this.players.render(8.3, 82.8, 15.49, 24, 46.5, 72);
