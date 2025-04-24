@@ -1,50 +1,5 @@
 import { Object } from "./Objects.js";
-import { Game } from "./main.js";
-
-
-function showLoadingScreen() {
-    document.getElementById("loading-screen").style.display = "flex";
-}
-
-
-function hideLoadingScreen() {
-    document.getElementById("loading-screen").style.display = "none";
-}
-
-
-
-async function fetchPokemonStat(data) {
-    return {
-        name: data.name,
-        stats: data.stats,
-        moves: data.moves,
-        sprite: data.sprites.front_default
-    };
-}
-
-function getStat(statsArray, statName) {
-    return statsArray.find(s => s.stat.name === statName).base_stat;
-}
-
-async function fetchMove(moveUrl) {
-    const res = await fetch(moveUrl);
-    const moveData = await res.json();
-    return {
-        name: moveData.name,
-        power: moveData.power, // can be null!
-        accuracy: moveData.accuracy,
-        type: moveData.type.name
-    };
-}
-
-function calculateDamage(level, power, attack, defense) {
-    const base = (((2 * level) / 5 + 2) * power * (attack / defense)) / 50 + 2;
-    return Math.floor(base * (0.85 + Math.random() * 0.15)); // random factor 0.85-1
-}
-
-
-
-
+import { Utils } from "./utils.js";
 
 export class Battle {
     constructor(canvas, context) {
@@ -59,6 +14,9 @@ export class Battle {
 
         this.pokeimg1 = document.getElementById('pokemon1')
         this.pokeimg2 = document.getElementById('pokemon2')
+
+
+        this.utils = new Utils()
 
 
         this.ctx.font = "30px 'Press Start 2P', sans-serif";
@@ -81,7 +39,7 @@ export class Battle {
             "grimer", "muk", "shellder", "cloyster", "gastly", "haunter", "gengar", "onix", "drowzee", "hypno", "krabby",
             "kingler", "voltorb", "electrode", "rayquaza", "arceus"
         ];
-        this.pokename = 'pikachu'
+        this.pokename = ''
         this.starter_name = ''
         
         this.secondStarter = ''
@@ -117,6 +75,7 @@ export class Battle {
 
         this.win = false
         this.lose = false
+        this.run = false
         // this.setup = false;
 
 
@@ -130,6 +89,9 @@ export class Battle {
         this.isperforming = false
         this.attackerName = ''
         this.moveused = ''
+
+        this.enemyTotalHP = 0
+        this.ourStarterTotalHP = 0
 
 
         this.update = this.update.bind(this);
@@ -146,9 +108,9 @@ export class Battle {
         setTimeout(() => {
             moving.classList.remove(classToAdd)
         }, 1000)
-        const move = await fetchMove(moveUrl);
+        const move = await this.utils.fetchMove(moveUrl);
         let effect = document.getElementById('effect')
-        effect.src = 'assets/attack.wav'
+        effect.src = 'assets/sounds/attack.wav'
         effect.play()
 
         if (!move.power) {
@@ -156,10 +118,10 @@ export class Battle {
             return;
         }
 
-        const attackStat = getStat(attacker.stats, "attack");
-        const defenseStat = getStat(defender.stats, "defense");
+        const attackStat = this.utils.getStat(attacker.stats, "attack");
+        const defenseStat = this.utils.getStat(defender.stats, "defense");
 
-        const damage = calculateDamage(20, move.power, attackStat, defenseStat);
+        const damage = this.utils.calculateDamage(20, move.power, attackStat, defenseStat);
         defender.hp -= damage;
         if (defender.hp < 0) defender.hp = 0;
 
@@ -173,28 +135,10 @@ export class Battle {
 
         console.log(`${attacker.name} used ${move.name}!`);
         console.log(`${defender.name} took ${damage} damage!`);
-
     }
 
 
-    async dataGet(name) {
-        showLoadingScreen();
-        try {
-            const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
 
-            if (!response.ok) {
-                throw new Error("Couldn't fetch resource")
-            }
-
-            const data = await response.json();
-            this.data = data;
-
-            hideLoadingScreen();
-        } catch (error) {
-            console.error(error);
-            hideLoadingScreen();
-        }
-    }
 
     selectRandomPokemon() {
         let randInt = Math.floor(Math.random() * 100);
@@ -204,22 +148,29 @@ export class Battle {
         this.pokename = this.randomPokemons[randInt]
     }
 
+    async setup2(){
+        this.ourStarter = await this.utils.fetchPokemonStat(this.currentData);
+        this.ourStarter.hp = this.utils.getStat(this.ourStarter.stats, "hp");
+
+        this.ourStarterTotalHP = this.ourStarter.hp
+    }
+
     async setup() {
         this.selectRandomPokemon()
-        await this.dataGet(this.pokename)
-        console.log(this.data)
+        this.data = await this.utils.dataGet(this.pokename)
+        // console.log(this.data)
         this.pokeimg2.src = this.data.sprites.front_default
         this.pokeimg2.style.display = 'block'
 
 
-        this.ourStarter = await fetchPokemonStat(this.currentData);
-        this.enemy = await fetchPokemonStat(this.data);
+        this.ourStarter = await this.utils.fetchPokemonStat(this.currentData);
+        this.enemy = await this.utils.fetchPokemonStat(this.data);
 
-        this.ourStarter.hp = getStat(this.ourStarter.stats, "hp");
-        this.enemy.hp = getStat(this.enemy.stats, "hp");
+        this.ourStarter.hp = this.utils.getStat(this.ourStarter.stats, "hp");
+        this.ourStarterTotalHP = this.ourStarter.hp
+        this.enemy.hp = this.utils.getStat(this.enemy.stats, "hp");
+        this.enemyTotalHP = this.enemy.hp
     }
-
-
 
 
     render() {
@@ -303,10 +254,12 @@ export class Battle {
         this.menus.draw(4, 3, 91, 29, this.canvas.width * 0.2, this.canvas.height * 0.09, this.canvas.width * 0.24, this.canvas.height * 0.14) // Enemy stats
         this.ctx.fillStyle = "black"
         this.ctx.fillText(`${this.pokename}`, this.canvas.width * 0.22, this.canvas.height * 0.14)
-        this.ctx.fillStyle = "white"
-        this.ctx.fillRect(this.canvas.width * 0.2075, this.canvas.height * 0.145, this.canvas.width * 0.225, this.canvas.height * 0.04)
+        this.ctx.fillStyle = "red"
+        this.ctx.fillRect(this.canvas.width * 0.2075, this.canvas.height * 0.145, (this.canvas.width * 0.225), this.canvas.height * 0.04)
+        this.ctx.fillStyle = "green"
+        this.ctx.fillRect(this.canvas.width * 0.2075, this.canvas.height * 0.145, (this.canvas.width * 0.225) * (this.enemy.hp/this.enemyTotalHP), this.canvas.height * 0.04)
         this.ctx.fillStyle = "black"
-        this.ctx.fillText(`HP : ${this.enemy.hp} /${this.data.stats[0].base_stat}`, this.canvas.width * 0.22, this.canvas.height * 0.185)
+        this.ctx.fillText(`HP : ${this.enemy.hp} /${this.enemyTotalHP}`, this.canvas.width * 0.22, this.canvas.height * 0.185)
 
         if (this.attack_menu) {
             this.menus.draw(297, 3.9, 159, 48, 0, this.canvas.height * 0.74, this.canvas.width * 0.6, this.canvas.height * 0.27);
@@ -322,13 +275,16 @@ export class Battle {
 
         this.menus.draw(12, 45, 91, 36, this.canvas.width * 0.6, this.canvas.height * 0.58, this.canvas.width * 0.3, this.canvas.height * 0.15) // Our Starter stats
         this.ctx.fillStyle = "black"
-        this.ctx.fillText(`${this.starter_name}`, this.canvas.width * 0.62, this.canvas.height * 0.63)
-        this.ctx.fillStyle = "white"
-        this.ctx.fillRect(this.canvas.width * 0.61, this.canvas.height * 0.635, this.canvas.width * 0.285, this.canvas.height * 0.07)
+        this.ctx.fillText(`${this.currentName}`, this.canvas.width * 0.62, this.canvas.height * 0.63)
+        this.ctx.fillStyle = "red"
+        this.ctx.fillRect(this.canvas.width * 0.61, this.canvas.height * 0.635, this.canvas.width * 0.285 , this.canvas.height * 0.06)
+        this.ctx.fillStyle = "green"
+        this.ctx.fillRect(this.canvas.width * 0.61, this.canvas.height * 0.635, this.canvas.width * 0.285 * (this.ourStarter.hp/this.ourStarterTotalHP), this.canvas.height * 0.06)
         this.ctx.fillStyle = "black"
-        this.ctx.fillText(`HP : ${this.ourStarter.hp} / ${this.currentData.stats[0].base_stat}`, this.canvas.width * 0.62, this.canvas.height * 0.7)
+        this.ctx.fillText(`HP : ${this.ourStarter.hp} / ${this.ourStarterTotalHP}`, this.canvas.width * 0.62, this.canvas.height * 0.68)
 
         if (this.isperforming) {
+            this.attack_menu =false
             this.ctx.fillStyle = "white"
             this.ctx.fillText(`${this.attackerName} used ${this.moveused}!`, this.canvas.width * 0.035, this.canvas.height * 0.83);
         }
@@ -405,14 +361,17 @@ export class Battle {
 
         window.addEventListener('keydown', async (e) => {
             if (e.key === 'Enter') {
-                if (!this.bagOpen && !this.pokeSelect) {
+                if (!this.bagOpen && !this.pokeSelect && !this.isperforming) {
                     if (!this.win && !this.lose) {
 
                         if (!this.isperforming) {
 
-                            if (this.arrow_posx === this.canvas.width * 0.625 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && !this.win && !this.lose) {
-                                this.arrow_posx = this.canvas.width * 0.02;
-                                this.attack_menu = true
+                            if (this.arrow_posx === this.canvas.width * 0.625 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && !this.win && !this.lose && !this.attack_menu) {
+                                setTimeout(()=>{
+                                    if(!this.isperforming)
+                                    this.arrow_posx = this.canvas.width * 0.02;
+                                    this.attack_menu = true
+                                } , 500)
                             }
                             else if (this.arrow_posx >= this.canvas.width * 0.7 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && !this.win && !this.lose) {
                                 this.bagOpen =true
@@ -426,30 +385,12 @@ export class Battle {
                                 this.selectPokemon.style.display = 'block'
                                 let instructions = document.getElementById('PokelistInstruction')
                                 
-                                instructions.innerHTML = `Press "F" to select 1.)${this.starter_name} , "G" for 2.) ${this.secondStarter} and "H" to select 3.) ${this.thirdStarter} and Press "B" to go back!`
+                                instructions.innerHTML = `Press "F" to select ${this.starter_name} , "G" for ${this.secondStarter} and "H" to select ${this.thirdStarter} and Press "B" to go back!`
                             }
                             else if (this.arrow_posx >= this.canvas.width * 0.7 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== '' && !this.win && !this.lose) {
-                                setTimeout(() => {
-                                    this.pokeimg2.src = ''
-                                    this.pokeimg1.src = ''
-                                    this.pokeimg2.style.display = 'none'
-                                    this.pokeimg1.style.display = 'none'
-                                    this.ctx.fillStyle = 'black'
-                                    window.game.players.x = 335
-                                    window.game.players.y = 670
-                                    window.game.scene = 'world'
-                                    this.win = false
-                                    this.lose = false
-                                    this.animation_completed = false
-                                    this.attack_menu = false
-                                    window.game.render()
-                                    window.game.players.setup();
-                                    window.game.controls();
-                                    window.game.battle.controls();
-                                    window.game.update()
-                                }, 1000)
+                                this.run = true
                             }
-                            else if (this.arrow_posx === this.canvas.width * 0.02 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && this.attack_menu === true && !this.win && !this.lose) {
+                            else if (this.arrow_posx <= this.canvas.width * 0.05 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && this.attack_menu === true && !this.win && !this.lose) {
                                 this.attack_menu = false
                                 this.arrow_posx = this.canvas.width * 0.625
                                 this.arrow_posy = this.canvas.height * 0.8
@@ -459,23 +400,9 @@ export class Battle {
                                         if (!this.win && !this.lose)
                                             await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[0].move.url, 'pokemon2', 'enemy-translate', this.ctx);
                                     }, 2000)
-
-                                    setTimeout(() => {
-                                        if (!this.win && !this.lose) {
-
-                                            this.attack_menu = true
-                                            this.arrow_posx = this.canvas.width * 0.02
-                                            this.arrow_posy = this.canvas.height * 0.8
-                                        }
-                                        else {
-                                            this.attack_menu = false
-                                            this.arrow_posx = this.canvas.width * 0.625
-                                            this.arrow_posx = this.canvas.height * 0.8
-                                        }
-                                    }, 5000)
                                 }
                             }
-                            else if (this.arrow_posx === this.canvas.width * 0.35 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && this.attack_menu === true) {
+                            else if (this.arrow_posx >= this.canvas.width * 0.30 && this.arrow_posy === this.canvas.height * 0.8 && this.data !== '' && this.attack_menu === true) {
                                 this.attack_menu = false
                                 this.arrow_posx = this.canvas.width * 0.625
                                 this.arrow_posy = this.canvas.height * 0.8
@@ -485,23 +412,9 @@ export class Battle {
                                         if (!this.win && !this.lose)
                                             await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[1].move.url, 'pokemon2', 'enemy-translate', this.ctx);
                                     }, 2000)
-
-                                    setTimeout(() => {
-                                        if (!this.win && !this.lose) {
-
-                                            this.attack_menu = true
-                                            this.arrow_posx = this.canvas.width * 0.35
-                                            this.arrow_posy = this.canvas.height * 0.8
-                                        }
-                                        else {
-                                            this.attack_menu = false
-                                            this.arrow_posx = this.canvas.width * 0.625
-                                            this.arrow_posx = this.canvas.height * 0.8
-                                        }
-                                    }, 5000)
                                 }
                             }
-                            else if (this.arrow_posx === this.canvas.width * 0.02 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== '' && this.attack_menu === true) {
+                            else if (this.arrow_posx <= this.canvas.width * 0.05 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== '' && this.attack_menu === true) {
                                 this.attack_menu = false
                                 this.arrow_posx = this.canvas.width * 0.625
                                 this.arrow_posy = this.canvas.height * 0.8
@@ -511,22 +424,9 @@ export class Battle {
                                         if (!this.win && !this.lose)
                                             await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[2].move.url, 'pokemon2', 'enemy-translate', this.ctx);
                                     }, 2000)
-                                    setTimeout(() => {
-                                        if (!this.win && !this.lose) {
-
-                                            this.attack_menu = true
-                                            this.arrow_posx = this.canvas.width * 0.02
-                                            this.arrow_posy = this.canvas.height * 0.9
-                                        }
-                                        else {
-                                            this.attack_menu = false
-                                            this.arrow_posx = this.canvas.width * 0.625
-                                            this.arrow_posx = this.canvas.height * 0.8
-                                        }
-                                    }, 5000)
                                 }
                             }
-                            else if (this.arrow_posx === this.canvas.width * 0.35 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== '' && this.attack_menu === true) {
+                            else if (this.arrow_posx >= this.canvas.width * 0.30 && this.arrow_posy === this.canvas.height * 0.9 && this.data !== '' && this.attack_menu === true) {
                                 this.attack_menu = false
                                 this.arrow_posx = this.canvas.width * 0.625
                                 this.arrow_posy = this.canvas.height * 0.8
@@ -536,20 +436,6 @@ export class Battle {
                                         if (!this.win && !this.lose)
                                             await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[3].move.url, 'pokemon2', 'enemy-translate', this.ctx);
                                     }, 2000)
-
-                                    setTimeout(() => {
-                                        if (!this.win && !this.lose) {
-
-                                            this.attack_menu = true
-                                            this.arrow_posx = this.canvas.width * 0.35
-                                            this.arrow_posy = this.canvas.height * 0.9
-                                        }
-                                        else {
-                                            this.attack_menu = false
-                                            this.arrow_posx = this.canvas.width * 0.625
-                                            this.arrow_posx = this.canvas.height * 0.8
-                                        }
-                                    }, 5000)
                                 }
                             }
                         }
@@ -572,19 +458,23 @@ export class Battle {
                         if (e.key === 'f'){
                             this.currentData = this.starterData
                             this.currentName = this.starter_name
-                            await this.setup()
+                            await this.setup2()
                         }
-                        else if(e.key === 'g'){
-                            this.currentData = this.secondStarterData
-                            this.currentName = this.secondStarter
-                            await this.setup()
+                        if(this.secondStarter !=''){
+                            if(e.key === 'g'){
+                                this.currentData = this.secondStarterData
+                                this.currentName = this.secondStarter
+                                await this.setup2()
+                            }
                         }
-                        else if(e.key === 'h'){
-                            this.currentData = this.thirdStarterData
-                            this.currentName = this.thirdStarter
-                            console.log(this.thirdStarterData)
-                            console.log(this.currentName)
-                            await this.setup()
+                        if(this.thirdStarter !=''){
+                            if(e.key === 'h'){
+                                this.currentData = this.thirdStarterData
+                                this.currentName = this.thirdStarter
+                                console.log(this.thirdStarterData)
+                                console.log(this.currentName)
+                                await this.setup2()
+                            }
                         }
                     }
                 }
@@ -605,7 +495,7 @@ export class Battle {
 
 
     update() {
-        if (!this.win && !this.lose) {
+        if (!this.win && !this.lose && !this.run) {
             this.render();
             requestAnimationFrame(this.update); // To loop again and again
         }
@@ -622,7 +512,14 @@ export class Battle {
                 this.win = false
                 this.lose = false
                 this.animation_completed = false
+                this.isperforming = false
                 this.attack_menu = false
+                this.run = false
+                this.arrow_posx = this.canvas.width * 0.625;
+                this.arrow_posy = this.canvas.height * 0.8;
+                let audio = document.getElementById('audio')
+                audio.src = 'assets/sounds/town.mp3'
+                audio.play()
                 window.game.render()
                 window.game.players.setup();
                 window.game.controls();

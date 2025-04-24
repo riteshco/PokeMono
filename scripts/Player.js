@@ -184,7 +184,7 @@ export class Player {
             if (this.isInBushes(this.x, this.y)) {
 
                 this.selectRandomPokemon();
-                this.game.audio.src = 'assets/battle.mp3'
+                this.game.audio.src = 'assets/sounds/battle.mp3'
                 this.game.audio.play()
 
                 this.fetchData(this.pokename)
@@ -194,20 +194,22 @@ export class Player {
         }
         // 951 660
         // console.log(this.x , this.y)
+        if(!this.isInBushes(this.x,this.y) || !this.has_starter){
 
-        if (this.keys["w"]) {
-            if (this.y > this.game.scale * (0.7) && this.y < Math.floor(this.game.height / this.game.scale) * this.game.scale) {
-                if (!this.isColliding(this.x, this.y - 2)) {
-                    this.y -= 2;
+            
+            if (this.keys["w"]) {
+                if (this.y > this.game.scale * (0.7) && this.y < Math.floor(this.game.height / this.game.scale) * this.game.scale) {
+                    if (!this.isColliding(this.x, this.y - 2)) {
+                        this.y -= 2;
+                    }
                 }
             }
-        }
-        if (this.keys["s"]) {
-            if (this.y > 0 && this.y < (Math.floor(this.game.height / this.game.scale) - 1) * this.game.scale) {
-                if (!this.isColliding(this.x, this.y + 2)) {
-
-                    if (this.x <= Math.floor(this.game.width * (0.7) / this.game.scale) * this.game.scale) {
-                        this.y += 2;
+            if (this.keys["s"]) {
+                if (this.y > 0 && this.y < (Math.floor(this.game.height / this.game.scale) - 1) * this.game.scale) {
+                    if (!this.isColliding(this.x, this.y + 2)) {
+                        
+                        if (this.x <= Math.floor(this.game.width * (0.7) / this.game.scale) * this.game.scale) {
+                            this.y += 2;
                     }
                     else {
                         if (this.y <= Math.floor(this.game.height * (0.64) / this.game.scale) * this.game.scale) {
@@ -265,6 +267,7 @@ export class Player {
         } else {
             this.animationTime = 0; // Reset on idle
         }
+    }
     }
 
 
