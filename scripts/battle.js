@@ -13,8 +13,8 @@ export class Battle {
         this.animation_completed = false
         this.attack_menu = false
 
-        this.pokeimg1 = document.getElementById('pokemon1')
-        this.pokeimg2 = document.getElementById('pokemon2')
+        this.pokeimg1 = document.getElementById(ENUM.POKECLASS1)
+        this.pokeimg2 = document.getElementById(ENUM.POKECLASS2)
 
 
         this.utils = new Utils()
@@ -214,17 +214,17 @@ export class Battle {
         const rightMenuX = this.canvas.width - rightMenuWidth;
         this.menus.draw(146, 4, 119, 51, rightMenuX, menuBottomY, rightMenuWidth, menuBottomHeight);
 
-        if (this.keys['up']) {
+        if (this.keys[ENUM.UP]) {
             if (this.arrow_posy === this.canvas.height * 0.9)
                 this.arrow_posy -= this.canvas.height * 0.1
-            this.keys['up'] = false
+            this.keys[ENUM.UP] = false
         }
-        if (this.keys['down']) {
+        if (this.keys[ENUM.DOWN]) {
             if (this.arrow_posy === this.canvas.height * 0.8)
                 this.arrow_posy += this.canvas.height * 0.1
-            this.keys['down'] = false
+            this.keys[ENUM.DOWN] = false
         }
-        if (this.keys['left']) {
+        if (this.keys[ENUM.LEFT]) {
             if (this.arrow_posx === this.canvas.width * 0.35) {
                 this.arrow_posx -= this.canvas.width * 0.33
             }
@@ -232,16 +232,16 @@ export class Battle {
                 this.arrow_posx -= this.canvas.width * 0.18
             }
 
-            this.keys['left'] = false
+            this.keys[ENUM.LEFT] = false
         }
-        if (this.keys['right']) {
+        if (this.keys[ENUM.RIGHT]) {
             if (this.arrow_posx === this.canvas.width * 0.625) {
                 this.arrow_posx += this.canvas.width * 0.18
             }
             if (this.arrow_posx >= this.canvas.width * 0.01 && this.arrow_posx < this.canvas.width * 0.3) {
                 this.arrow_posx += this.canvas.width * 0.33
             }
-            this.keys['right'] = false
+            this.keys[ENUM.RIGHT] = false
         }
         if (!this.animation_completed) {
             this.ctx.fillText(`A wild ${this.pokename} appeared!`, this.canvas.width * 0.035, this.canvas.height * 0.83);
@@ -349,22 +349,22 @@ export class Battle {
                 switch (e.key) {
                     case 'ArrowUp':
                         case 'w':
-                            this.keys['up'] = true;
+                            this.keys[ENUM.UP] = true;
                             break;
                             
                             case 'ArrowDown':
                                 case 's':
-                                    this.keys['down'] = true;
+                                    this.keys[ENUM.DOWN] = true;
                                     break;
                                     
                                     case 'ArrowLeft':
                                         case 'a':
-                                            this.keys['left'] = true;
+                                            this.keys[ENUM.LEFT] = true;
                                             break;
                                             
                                             case 'ArrowRight':
                 case 'd':
-                    this.keys['right'] = true;
+                    this.keys[ENUM.RIGHT] = true;
                     break;
                 }
             }
@@ -407,11 +407,11 @@ export class Battle {
                                 this.arrow_posx = this.canvas.width * 0.625
                                 this.arrow_posy = this.canvas.height * 0.8
                                 if (!this.win && !this.lose ) {
-                                    await this.performMove(this.ourStarter, this.enemy, this.ourStarter.moves[0].move.url, 'pokemon1', 'starter-translate', this.ctx);
+                                    await this.performMove(this.ourStarter, this.enemy, this.ourStarter.moves[0].move.url, ENUM.POKECLASS1, 'starter-translate', this.ctx);
                                     setTimeout(async () => {
                                         if (!this.win && !this.lose)
                                             this.pp1 -= 1;
-                                            await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[0].move.url, 'pokemon2', 'enemy-translate', this.ctx);
+                                            await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[0].move.url, ENUM.POKECLASS2, 'enemy-translate', this.ctx);
                                     }, 2000)
                                 }
                             }
@@ -421,11 +421,11 @@ export class Battle {
                                 this.arrow_posx = this.canvas.width * 0.625
                                 this.arrow_posy = this.canvas.height * 0.8
                                 if (!this.win && !this.lose) {
-                                    await this.performMove(this.ourStarter, this.enemy, this.ourStarter.moves[1].move.url, 'pokemon1', 'starter-translate', this.ctx);
+                                    await this.performMove(this.ourStarter, this.enemy, this.ourStarter.moves[1].move.url, ENUM.POKECLASS1, 'starter-translate', this.ctx);
                                     setTimeout(async () => {
                                         if (!this.win && !this.lose)
                                             this.pp2 -= 1;
-                                            await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[1].move.url, 'pokemon2', 'enemy-translate', this.ctx);
+                                            await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[1].move.url, ENUM.POKECLASS2, 'enemy-translate', this.ctx);
                                     }, 2000)
                                 }
                             }
@@ -435,11 +435,11 @@ export class Battle {
                                 this.arrow_posx = this.canvas.width * 0.625
                                 this.arrow_posy = this.canvas.height * 0.8
                                 if (!this.win && !this.lose) {
-                                    await this.performMove(this.ourStarter, this.enemy, this.ourStarter.moves[2].move.url, 'pokemon1', 'starter-translate', this.ctx);
+                                    await this.performMove(this.ourStarter, this.enemy, this.ourStarter.moves[2].move.url, ENUM.POKECLASS1, 'starter-translate', this.ctx);
                                     setTimeout(async () => {
                                         if (!this.win && !this.lose)
                                             this.pp3 -= 1;
-                                            await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[2].move.url, 'pokemon2', 'enemy-translate', this.ctx);
+                                            await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[2].move.url, ENUM.POKECLASS2, 'enemy-translate', this.ctx);
                                     }, 2000)
                                 }
                             }
@@ -449,11 +449,11 @@ export class Battle {
                                 this.arrow_posx = this.canvas.width * 0.625
                                 this.arrow_posy = this.canvas.height * 0.8
                                 if (!this.win && !this.lose) {
-                                    await this.performMove(this.ourStarter, this.enemy, this.ourStarter.moves[3].move.url, 'pokemon1', 'starter-translate', this.ctx);
+                                    await this.performMove(this.ourStarter, this.enemy, this.ourStarter.moves[3].move.url, ENUM.POKECLASS1, 'starter-translate', this.ctx);
                                     setTimeout(async () => {
                                         if (!this.win && !this.lose)
                                             this.pp4 -= 1;
-                                            await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[3].move.url, 'pokemon2', 'enemy-translate', this.ctx);
+                                            await this.performMove(this.enemy, this.ourStarter, this.enemy.moves[3].move.url, ENUM.POKECLASS2, 'enemy-translate', this.ctx);
                                     }, 2000)
                                 }
                             }
@@ -516,10 +516,10 @@ export class Battle {
     }
 
     MakeFalse() {
-        this.keys['up'] = false
-        this.keys['down'] = false
-        this.keys['left'] = false
-        this.keys['right'] = false
+        this.keys[ENUM.UP] = false
+        this.keys[ENUM.DOWN] = false
+        this.keys[ENUM.LEFT] = false
+        this.keys[ENUM.RIGHT] = false
     }
 
 

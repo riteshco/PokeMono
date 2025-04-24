@@ -6,5 +6,7 @@ export const ENUM={
     UP: 'up',
     DOWN: 'down',
     LEFT: 'left',
-    RIGHT: 'right'
+    RIGHT: 'right',
+    POKECLASS1: 'pokemon1',
+    POKECLASS2: 'pokemon2'
 }

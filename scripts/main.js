@@ -2,8 +2,6 @@ import { Player } from "./Player.js";
 import { Object } from "./Objects.js";
 import { Battle } from "./battle.js";
 import { Utils } from "./utils.js";
-import { ENUM } from "./type.js";
-
 export class Game {
     constructor(canvas, context) {
         this.canvas = canvas;

@@ -23,6 +23,9 @@ export class Player {
         this.animation_time = 0;
         this.direction = 'down';
 
+        this.worldx = 0
+        this.worldy = 0
+
 
         this.colliders = [
             { x: 240, y: 462, width: 240, height: 190 },
@@ -103,7 +106,8 @@ export class Player {
     async update() {
         if (this.has_starter) {
             if (this.isInBushes(this.x, this.y)) {
-
+                this.worldx = this.x
+                this.worldy = this.y
                 this.selectRandomPokemon();
                 this.game.audio.src = 'assets/sounds/battle.mp3'
                 this.game.audio.play()
