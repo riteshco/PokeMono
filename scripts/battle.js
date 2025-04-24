@@ -34,19 +34,6 @@ export class Battle {
         this.pp4 = 0
         this.totalpp4 = 0
 
-        this.randomPokemons = [
-            "bulbasaur", "ivysaur", "venusaur", "charmander", "charmeleon", "charizard", "squirtle", "wartortle", "blastoise",
-            "caterpie", "metapod", "butterfree", "weedle", "kakuna", "beedrill", "pidgey", "pidgeotto", "pidgeot", "rattata",
-            "raticate", "spearow", "fearow", "ekans", "arbok", "pikachu", "raichu", "sandshrew", "sandslash", "nidoran-f",
-            "nidorina", "nidoqueen", "nidoran-m", "nidorino", "nidoking", "clefairy", "clefable", "vulpix", "ninetales",
-            "jigglypuff", "wigglytuff", "zubat", "golbat", "oddish", "gloom", "vileplume", "paras", "parasect", "venonat",
-            "venomoth", "diglett", "dugtrio", "meowth", "persian", "psyduck", "golduck", "mankey", "primeape", "growlithe",
-            "arcanine", "poliwag", "poliwhirl", "poliwrath", "abra", "kadabra", "alakazam", "machop", "machoke", "machamp",
-            "bellsprout", "weepinbell", "victreebel", "tentacool", "tentacruel", "geodude", "graveler", "golem", "ponyta",
-            "rapidash", "slowpoke", "slowbro", "magnemite", "magneton", "farfetchd", "doduo", "dodrio", "seel", "dewgong",
-            "grimer", "muk", "shellder", "cloyster", "gastly", "haunter", "gengar", "onix", "drowzee", "hypno", "krabby",
-            "kingler", "voltorb", "electrode", "rayquaza", "arceus"
-        ];
         this.pokename = ''
         this.starter_name = ''
         
@@ -142,17 +129,6 @@ export class Battle {
 
     }
 
-
-
-
-    selectRandomPokemon() {
-        let randInt = Math.floor(Math.random() * 100);
-        if (randInt === 100) {
-            randInt = 99
-        }
-        this.pokename = this.randomPokemons[randInt]
-    }
-
     async setup2(){
         this.ourStarter = await this.utils.fetchPokemonStat(this.currentData);
         this.ourStarter.hp = await this.utils.getStat(this.ourStarter.stats, "hp");
@@ -168,7 +144,7 @@ export class Battle {
     }
 
     async setup() {
-        this.selectRandomPokemon()
+        this.pokename = await this.utils.GetRandomPokemon()
         this.data = await this.utils.dataGet(this.pokename)
         this.pokeimg2.src = this.data.sprites.front_default
         this.pokeimg2.style.display = 'block'
