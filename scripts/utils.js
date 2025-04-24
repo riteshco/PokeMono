@@ -34,7 +34,8 @@ export class Utils{
             name: moveData.name,
             power: moveData.power,
             accuracy: moveData.accuracy,
-            type: moveData.type.name
+            type: moveData.type.name,
+            pp:moveData.pp
         };
     }
 
@@ -67,5 +68,12 @@ export class Utils{
 
         return data.name
     }
+
+    async getMovePP(moveName) {
+        const res = await fetch(`https://pokeapi.co/api/v2/move/${moveName.toLowerCase()}/`);
+        if (!res.ok) throw new Error('Move not found');
+        const data = await res.json();
+        return data.pp;
+      }
 
 }
