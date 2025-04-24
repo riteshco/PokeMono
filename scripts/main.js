@@ -60,33 +60,10 @@ export class Game {
 
         this.audio = document.getElementById('audio')
         this.audio.src = 'assets/sounds/town.mp3'
-
-        this.pokemonNames = [
-            "geodude", "mewtwo", "rhydon", "togepi", "cyndaquil", "golem", "arbok", "nidorino", "natu", "scyther",
-            "sunkern", "tentacool", "lanturn", "vileplume", "goldeen", "kingler", "bellossom", "rattata", "seadra", "butterfree",
-            "lickitung", "kabutops", "zapdos", "gastly", "marowak", "hoppip", "drowzee", "rhyhorn", "machoke", "hypno",
-            "slowking", "mr. mime", "mankey", "shellder", "nidoran♀", "wobbuffet", "clefairy", "pidgeotto", "sentret", "beedrill",
-            "hitmonchan", "mareep", "dewgong", "meganium", "poliwhirl", "seaking", "sudowoodo", "azumarill", "exeggcute", "muk",
-            "quilava", "doduo", "machop", "omanyte", "grimer", "victreebel", "ampharos", "machamp", "rapidash", "skiploom",
-            "togetic", "eevee", "jynx", "flaaffy", "crobat", "tentacruel", "dunsparce", "hoothoot", "dodrio", "psyduck",
-            "gloom", "graveler", "typhlosion", "tangela", "noctowl", "sandslash", "quilava", "slowbro", "ledyba", "magikarp",
-            "farfetch’d", "starmie", "umbreon", "misdreavus", "butterfree", "weedle", "clefable", "poliwrath", "aerodactyl", "exeggutor",
-            "kadabra", "omastar", "kangaskhan", "charizard", "togepi", "wooper", "togetic", "kabuto", "machamp", "primeape",
-            "charmeleon", "blastoise", "cleffa", "scyther", "ninetales", "gengar", "tentacool", "flaaffy", "wigglytuff", "azumarill",
-            "cloyster", "arcanine", "hypno", "vaporeon", "croconaw", "magnemite", "bellossom", "meowth", "sunflora", "jolteon",
-            "marowak", "diglett", "lapras", "nidoran♂", "hoothoot", "rapidash", "magneton", "alakazam", "seadra", "typhlosion",
-            "bayleef", "pikachu", "pinsir", "nidoqueen", "igglybuff", "ivysaur", "sentret", "butterfree", "cleffa", "clefairy",
-            "raichu", "dragonair", "muk", "victreebel", "snubbull", "chikorita", "wigglytuff", "hitmonchan", "jolteon", "marill",
-            "weezing", "arbok", "wartortle", "hitmonlee", "rattata", "chinchou", "feraligatr", "forretress", "machop", "haunter",
-            "charizard", "pidgeotto", "espeon", "misdreavus", "gastly", "persian", "electrode", "jynx", "krabby", "starmie",
-            "staryu", "kadabra", "exeggcute", "charmeleon", "togepi", "alakazam", "lickitung", "nidoqueen", "poliwhirl", "snorlax",
-            "poliwag", "porygon", "dragonite", "fearow", "pidgeot", "magneton", "jigglypuff", "sandslash", "bulbasaur", "kakuna"
-        ];
-        this.randomStarter = 'groudon'
-
-
+        this.randomStarter = ''
 
     }
+
 
     render() {
 
@@ -327,7 +304,7 @@ export class Game {
                     this.ctx.fillText(`You Chose ${this.starter_name}!`, this.width * (0.25), this.height * (0.8) + 85)
                     setTimeout(() => {
                         this.dialog = 3;
-                    }, 500)
+                    }, 1500)
                 }
                 else if (this.dialog === 3) {
                     this.ctx.fillText('Choose your Second Pokemon --- ', this.width * (0.2) + 40, this.height * (0.8) + 60)
@@ -343,7 +320,7 @@ export class Game {
                     this.ctx.fillText(`You Chose ${this.battle.secondStarter}!`, this.width * (0.25), this.height * (0.8) + 85)
                     setTimeout(() => {
                         this.dialog = 6;
-                    }, 500)
+                    }, 1500)
                 }
                 else if (this.dialog === 6) {
                     this.ctx.fillText('Choose your Third Pokemon --- ', this.width * (0.2) + 40, this.height * (0.8) + 60)
@@ -359,7 +336,7 @@ export class Game {
                     this.ctx.fillText(`You Chose ${this.battle.thirdStarter}!`, this.width * (0.25), this.height * (0.8) + 85)
                     setTimeout(() => {
                         this.dialog = 9;
-                    }, 500)
+                    }, 1500)
                 }
                 else if (this.dialog === 9) {
                     this.ctx.fillText(`You Chose all three!`, this.width * (0.25), this.height * (0.8) + 85)
@@ -432,8 +409,7 @@ export class Game {
                             this.players.has_starter = true
                         }
                         if (this.arrow_posx === this.width * (0.65) - 60) {
-                            let randint = Math.floor(Math.random() * 199.99)
-                            this.randomStarter = this.pokemonNames[randint]
+                            this.randomStarter = await this.utils.GetRandomPokemon()
                             this.starter_name = this.randomStarter
                             this.battle.starter_name = this.randomStarter
                             this.data = await this.utils.dataGet(this.randomStarter);
@@ -456,8 +432,7 @@ export class Game {
                             this.battle.secondStarterData = this.data2
                         }
                         if (this.arrow_posx === this.width * (0.65) - 60) {
-                            let randint = Math.floor(Math.random() * 199.99)
-                            this.randomStarter = this.pokemonNames[randint]
+                            this.randomStarter = await this.utils.GetRandomPokemon()
                             this.battle.secondStarter = this.randomStarter
                             this.data2 = await this.utils.dataGet(this.randomStarter);
                             this.battle.secondStarterData = this.data2
@@ -478,8 +453,7 @@ export class Game {
                             this.battle.thirdStarterData = this.data3
                         }
                         if (this.arrow_posx === this.width * (0.65) - 60) {
-                            let randint = Math.floor(Math.random() * 199.99)
-                            this.randomStarter = this.pokemonNames[randint]
+                            this.randomStarter = await this.utils.GetRandomPokemon()
                             this.battle.thirdStarter = this.randomStarter
                             this.data3 = await this.utils.dataGet(this.randomStarter);
                             this.battle.thirdStarterData = this.data3

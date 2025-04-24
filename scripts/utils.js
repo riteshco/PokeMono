@@ -57,4 +57,15 @@ export class Utils{
         }
     }
 
+
+    async GetRandomPokemon(){
+        const MaxID = 1010
+        const randomID = Math.floor(Math.random() * 1010) + 1;
+
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomID}`)
+        const data = await response.json()
+
+        return data.name
+    }
+
 }
