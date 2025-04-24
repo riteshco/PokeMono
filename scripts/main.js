@@ -1,7 +1,8 @@
 import { Player } from "./Player.js";
-import { Object, CollidingObject } from "./Objects.js";
+import { Object } from "./Objects.js";
 import { Battle } from "./battle.js";
 import { Utils } from "./utils.js";
+import { ENUM } from "./type.js";
 
 export class Game {
     constructor(canvas, context) {
@@ -28,7 +29,6 @@ export class Game {
         this.battle = new Battle(this.canvas, this.ctx);
         this.assets = new Object(this, 'assets/tileset_cleaned.png');
         this.menus = new Object(this, 'assets/battle_menu.png')
-        this.colliderAssets = new CollidingObject(this, 'assets/tileset_cleaned.png');
         this.players = new Player(this, 'assets/Sprites_cleaned.png', 335, 670);
         this.utils = new Utils()
 
@@ -206,17 +206,17 @@ export class Game {
                 for (let j = -0.5; j < this.height / this.scale; j += 0.5) {
                     if (j == -0.5) {
                         if (i !== Math.floor((this.width * 0.2) / this.scale) + 1 && i !== Math.floor((this.width * 0.2) / this.scale) + 2 && i !== Math.floor((this.width * 0.2) / this.scale) + 3) {
-                            this.colliderAssets.draw(94, 28, 32, 52, 64 * i, 104 * j, 64, 104);
+                            this.assets.draw(94, 28, 32, 52, 64 * i, 104 * j, 64, 104);
                         }
                     }
                     else if (j >= Math.floor(((this.height * (0.46)) / this.scale))) {
                         if (i < Math.floor((this.width * 0.44) / this.scale) + 1) {
-                            this.colliderAssets.draw(94, 28, 32, 52, 64 * i, 104 * j, 64, 104);
+                            this.assets.draw(94, 28, 32, 52, 64 * i, 104 * j, 64, 104);
                         }
                     }
                     else {
-                        this.colliderAssets.draw(94, 28, 32, 52, 0, 104 * j, 64, 104);
-                        this.colliderAssets.draw(94, 28, 32, 52, (this.width / this.scale) * 47, 104 * j, 64, 104);
+                        this.assets.draw(94, 28, 32, 52, 0, 104 * j, 64, 104);
+                        this.assets.draw(94, 28, 32, 52, (this.width / this.scale) * 47, 104 * j, 64, 104);
                     }
                 }
             }
@@ -231,19 +231,19 @@ export class Game {
             
             
             
-            this.colliderAssets.draw(110.3, 104.3, 7.4, 7.4, Math.floor(this.width * 0.7 / this.scale) * this.scale, Math.floor(this.height * 0.7 / this.scale) * this.scale, 48, 48)
+            this.assets.draw(110.3, 104.3, 7.4, 7.4, Math.floor(this.width * 0.7 / this.scale) * this.scale, Math.floor(this.height * 0.7 / this.scale) * this.scale, 48, 48)
             for (let i = 1; i < 10; ++i) {
-                this.colliderAssets.draw(119.3, 104.3, 15, 3, (Math.floor(this.width * 0.7 / this.scale) + i) * this.scale, Math.floor(this.height * 0.7 / this.scale) * this.scale, 48, 24)
+                this.assets.draw(119.3, 104.3, 15, 3, (Math.floor(this.width * 0.7 / this.scale) + i) * this.scale, Math.floor(this.height * 0.7 / this.scale) * this.scale, 48, 24)
             }
-            this.colliderAssets.draw(136.2, 104.3, 7.4, 7.4, (Math.floor(this.width * 0.7 / this.scale) + 10) * this.scale, Math.floor(this.height * 0.7 / this.scale) * this.scale, 48, 48)
+            this.assets.draw(136.2, 104.3, 7.4, 7.4, (Math.floor(this.width * 0.7 / this.scale) + 10) * this.scale, Math.floor(this.height * 0.7 / this.scale) * this.scale, 48, 48)
             for (let j = 1; j < 7; ++j) {
-                this.colliderAssets.draw(110.3, 113.3, 4, 7.4, Math.floor(this.width * 0.7 / this.scale) * this.scale, (Math.floor(this.height * 0.7 / this.scale) + j) * this.scale, 24, 48)
-                this.colliderAssets.draw(139.3, 113.8, 4, 6.4, (Math.floor(this.width * 0.7 / this.scale) + 10.33) * this.scale, (Math.floor(this.height * 0.7 / this.scale) + j) * this.scale, 32, 48)
+                this.assets.draw(110.3, 113.3, 4, 7.4, Math.floor(this.width * 0.7 / this.scale) * this.scale, (Math.floor(this.height * 0.7 / this.scale) + j) * this.scale, 24, 48)
+                this.assets.draw(139.3, 113.8, 4, 6.4, (Math.floor(this.width * 0.7 / this.scale) + 10.33) * this.scale, (Math.floor(this.height * 0.7 / this.scale) + j) * this.scale, 32, 48)
             }
             
             // --- Rendering buildings ---
-            this.colliderAssets.draw(8, 158, 80, 72, 240, 462, 240, 210);
-            this.colliderAssets.draw(14, 340, 112, 90, 810, 414, 336, 270);
+            this.assets.draw(8, 158, 80, 72, 240, 462, 240, 210);
+            this.assets.draw(14, 340, 112, 90, 810, 414, 336, 270);
 
             
             // --- Rendering instructions ---

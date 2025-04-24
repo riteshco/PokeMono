@@ -1,5 +1,6 @@
 import { Object } from "./Objects.js";
 import { Utils } from "./utils.js";
+import { ENUM } from "./type.js";
 
 export class Battle {
     constructor(canvas, context) {
