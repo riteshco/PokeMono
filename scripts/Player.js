@@ -118,7 +118,6 @@ export class Player {
                 y > bush.y &&
                 y < bush.y + 48
             ) {
-                console.log(bush.x, bush.y)
                 return true;
             }
         }
@@ -149,7 +148,6 @@ export class Player {
             }
 
             const data = await response.json()
-            console.log(data)
             this.data = data
             hideLoadingScreen();
         }

@@ -121,7 +121,7 @@ export class Battle {
         effect.play()
 
         if (!move.power) {
-            console.log(`${move.name} doesn't deal damage.`);
+
             return;
         }
 
@@ -140,8 +140,6 @@ export class Battle {
             this.isperforming = false
         }, 2000)
 
-        console.log(`${attacker.name} used ${move.name}!`);
-        console.log(`${defender.name} took ${damage} damage!`);
     }
 
 
@@ -157,9 +155,16 @@ export class Battle {
 
     async setup2(){
         this.ourStarter = await this.utils.fetchPokemonStat(this.currentData);
-        this.ourStarter.hp = this.utils.getStat(this.ourStarter.stats, "hp");
-
+        this.ourStarter.hp = await this.utils.getStat(this.ourStarter.stats, "hp");
         this.ourStarterTotalHP = this.ourStarter.hp
+        this.pp1= await this.utils.getMovePP(this.ourStarter.moves[0].move.name)
+        this.totalpp1 = this.pp1
+        this.pp2= await this.utils.getMovePP(this.ourStarter.moves[1].move.name)
+        this.totalpp2 = this.pp2
+        this.pp3= await this.utils.getMovePP(this.ourStarter.moves[2].move.name)
+        this.totalpp3 = this.pp3
+        this.pp4= await this.utils.getMovePP(this.ourStarter.moves[3].move.name)
+        this.totalpp3 = this.pp4
     }
 
     async setup() {
@@ -171,6 +176,8 @@ export class Battle {
 
         this.ourStarter = await this.utils.fetchPokemonStat(this.currentData);
         this.enemy = await this.utils.fetchPokemonStat(this.data);
+        this.ourStarter.hp = await this.utils.getStat(this.ourStarter.stats, "hp");
+        this.ourStarterTotalHP = this.ourStarter.hp
 
         this.pp1= await this.utils.getMovePP(this.ourStarter.moves[0].move.name)
         this.totalpp1 = this.pp1
@@ -182,8 +189,6 @@ export class Battle {
         this.totalpp3 = this.pp4
 
 
-        this.ourStarter.hp = this.utils.getStat(this.ourStarter.stats, "hp");
-        this.ourStarterTotalHP = this.ourStarter.hp
         this.enemy.hp = this.utils.getStat(this.enemy.stats, "hp");
         this.enemyTotalHP = this.enemy.hp
     }
@@ -281,22 +286,22 @@ export class Battle {
             this.menus.draw(297, 3.9, 159, 48, 0, this.canvas.height * 0.74, this.canvas.width * 0.6, this.canvas.height * 0.27);
             const moveNames = this.currentData.moves.slice(0, 4).map(m => m.move.name)
             this.ctx.fillStyle = "black"
-            if(this.pp1=0){
+            if(this.pp1===0){
                 this.ctx.fillStyle = "red"
             }
             this.ctx.fillText(`${moveNames[0]} ${this.pp1}/${this.totalpp1}`, this.canvas.width * 0.05, this.canvas.height * 0.84);
             this.ctx.fillStyle = "black"
-            if(this.pp2=0){
+            if(this.pp2===0){
                 this.ctx.fillStyle = "red"
             }
             this.ctx.fillText(`${moveNames[1]} ${this.pp2}/${this.totalpp2}`, this.canvas.width * 0.38, this.canvas.height * 0.84);
             this.ctx.fillStyle = "black"
-            if(this.pp3=0){
+            if(this.pp3===0){
                 this.ctx.fillStyle = "red"
             }
             this.ctx.fillText(`${moveNames[2]} ${this.pp3}/${this.totalpp3}`, this.canvas.width * 0.05, this.canvas.height * 0.94);
             this.ctx.fillStyle = "black"
-            if(this.pp4=0){
+            if(this.pp4===0){
                 this.ctx.fillStyle = "red"
             }
             this.ctx.fillText(`${moveNames[3]} ${this.pp4}/${this.totalpp4}`, this.canvas.width * 0.38, this.canvas.height * 0.94);
@@ -516,8 +521,6 @@ export class Battle {
                             if(e.key === 'h'){
                                 this.currentData = this.thirdStarterData
                                 this.currentName = this.thirdStarter
-                                console.log(this.thirdStarterData)
-                                console.log(this.currentName)
                                 await this.setup2()
                                 this.selectPokemon.style.display = 'none'
                                 this.pokeSelect = false
