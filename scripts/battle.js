@@ -457,12 +457,20 @@ export class Battle {
                             this.currentData = this.starterData
                             this.currentName = this.starter_name
                             await this.setup2()
+                            this.selectPokemon.style.display = 'none'
+                            this.pokeSelect = false
+                            
+                            instructions.innerHTML = ''
                         }
                         if(this.secondStarter !=''){
                             if(e.key === 'g'){
                                 this.currentData = this.secondStarterData
                                 this.currentName = this.secondStarter
                                 await this.setup2()
+                                this.selectPokemon.style.display = 'none'
+                                this.pokeSelect = false
+                                
+                                instructions.innerHTML = ''
                             }
                         }
                         if(this.thirdStarter !=''){
@@ -472,6 +480,10 @@ export class Battle {
                                 console.log(this.thirdStarterData)
                                 console.log(this.currentName)
                                 await this.setup2()
+                                this.selectPokemon.style.display = 'none'
+                                this.pokeSelect = false
+                                
+                                instructions.innerHTML = ''
                             }
                         }
                     }
