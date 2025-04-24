@@ -76,4 +76,35 @@ export class Utils{
         return data.pp;
       }
 
+    isMobileOrTablet() {
+        const screenWidth = window.innerWidth;
+        const mobileBreakpoint = 1024;
+      
+        const userAgent = navigator.userAgent;
+        const navigationTest= /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          userAgent
+        );
+        return navigationTest || screenWidth<mobileBreakpoint
+      }
+
+    
+      async fetchData(name) {
+        this.showLoadingScreen();
+        try {
+            const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+
+            if (!response.ok) {
+                throw new Error("Couldn't fetch resource")
+            }
+
+            const data = await response.json()
+            this.hideLoadingScreen();
+            return data
+        }
+        catch (error) {
+            console.error(error);
+            hideLoadingScreen();
+        }
+    }
+
 }

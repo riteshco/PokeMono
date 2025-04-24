@@ -3,15 +3,6 @@ import { Object, CollidingObject } from "./Objects.js";
 import { Battle } from "./battle.js";
 import { Utils } from "./utils.js";
 
-function showLoadingScreen() {
-    document.getElementById("loading-screen").style.display = "flex";
-}
-
-
-function hideLoadingScreen() {
-    document.getElementById("loading-screen").style.display = "none";
-}
-
 export class Game {
     constructor(canvas, context) {
         this.canvas = canvas;
@@ -66,20 +57,27 @@ export class Game {
 
 
     render() {
+        if(this.utils.isMobileOrTablet()){
+            let blocker = document.getElementById('blocker')
+            blocker.style.display = 'block'
+        }
+        else{
 
-        if (this.scene === 'world') {
+            
+            
+            if (this.scene === 'world') {
 
-            this.ctx.clearRect(0, 0, this.width, this.height);
+                this.ctx.clearRect(0, 0, this.width, this.height);
 
-            // --- Rendering grass ---
-            for (let i = 0; i < Math.floor(this.width / this.scale) + 1; ++i) {
-                for (let j = 0; j < (this.height / this.scale); ++j) {
-                    if (i % 4 == 0) {
-                        this.assets.draw(8, 66, 12, 12, 48 * i, 48 * j, 48, 48);
-                    } else if (i % 4 == 1) {
-                        this.assets.draw(25, 66, 12, 12, 48 * i, 48 * j, 48, 48);
-                    } else {
-                        this.assets.draw(59, 66, 12, 12, 48 * i, 48 * j, 48, 48);
+                // --- Rendering grass ---
+                for (let i = 0; i < Math.floor(this.width / this.scale) + 1; ++i) {
+                    for (let j = 0; j < (this.height / this.scale); ++j) {
+                        if (i % 4 == 0) {
+                            this.assets.draw(8, 66, 12, 12, 48 * i, 48 * j, 48, 48);
+                        } else if (i % 4 == 1) {
+                            this.assets.draw(25, 66, 12, 12, 48 * i, 48 * j, 48, 48);
+                        } else {
+                            this.assets.draw(59, 66, 12, 12, 48 * i, 48 * j, 48, 48);
                     }
                 }
             }
@@ -107,7 +105,7 @@ export class Game {
             this.assets.draw(129.4, 59.3, 7.3, 7.3, (this.width) * 0.6, 48 * (Math.floor(this.height / this.scale) * (0.8) + 2), 48, 48)
             this.assets.draw(129.4, 59.3, 7.3, 7.3, (this.width) * 0.6, 48 * (Math.floor(this.height / this.scale) * (0.8) + 3), 48, 48)
             this.assets.draw(129.4, 59.3, 7.3, 7.3, (this.width) * 0.6, 48 * (Math.floor(this.height / this.scale) * (0.8) + 4), 48, 48)
-
+            
             for (let j = 0; j < Math.floor(this.height / this.scale) * (0.7) + 1; ++j) {
                 this.assets.draw(129.4, 59.3, 7.3, 7.3, (this.width) * 0.3, (j - 1) * this.scale, 48, 48)
                 this.assets.draw(138.4, 59.3, 7.3, 7.3, (this.width) * 0.3 + this.scale, j * this.scale, 48, 48)
@@ -116,8 +114,8 @@ export class Game {
             }
             this.assets.draw(156.4, 50.3, 7.3, 7.3, (this.width) * 0.3 + 3 * this.scale, Math.floor(this.height / this.scale) * (0.7) * this.scale, 48, 48)
             this.assets.draw(138.4, 50.3, 7.3, 7.3, (this.width) * 0.3, Math.floor(this.height / this.scale) * (0.7) * this.scale, 48, 48)
-
-
+            
+            
             // --- Rendering bushes ---
             for (let i = 2; i < Math.floor(this.width * 0.99 / this.scale); ++i) {
                 for (let j = 1; j < Math.floor(this.height * 0.7 / this.scale); ++j) {
@@ -135,8 +133,8 @@ export class Game {
                     }
                 }
             }
-
-
+            
+            
             // --- Rendering Player ---
             let frame = Math.floor(this.players.animationTime / 20) % 3;
             if (this.players.keys["s"]) {
@@ -201,8 +199,8 @@ export class Game {
                     this.players.render(25.3, 147.7, 15.49, 24, 46.5, 72);
                 }
             }
-
-
+            
+            
             // --- Rendering trees ---
             for (let i = 0; i < this.width / this.scale; ++i) {
                 for (let j = -0.5; j < this.height / this.scale; j += 0.5) {
@@ -222,17 +220,17 @@ export class Game {
                     }
                 }
             }
-
-
+            
+            
             // --- Rendering Pool ---
             for (let i = Math.floor(this.width * 0.7 / this.scale); i <= (Math.floor(this.width * 0.7 / this.scale) + 10); ++i) {
                 for (let j = Math.floor(this.height * 0.7 / this.scale); j <= (Math.floor(this.height * 0.7 / this.scale) + 6); ++j) {
                     this.assets.draw(21.4, 4, 15, 14.4, i * this.scale, j * this.scale, 48, 48)
                 }
             }
-
-
-
+            
+            
+            
             this.colliderAssets.draw(110.3, 104.3, 7.4, 7.4, Math.floor(this.width * 0.7 / this.scale) * this.scale, Math.floor(this.height * 0.7 / this.scale) * this.scale, 48, 48)
             for (let i = 1; i < 10; ++i) {
                 this.colliderAssets.draw(119.3, 104.3, 15, 3, (Math.floor(this.width * 0.7 / this.scale) + i) * this.scale, Math.floor(this.height * 0.7 / this.scale) * this.scale, 48, 24)
@@ -242,20 +240,20 @@ export class Game {
                 this.colliderAssets.draw(110.3, 113.3, 4, 7.4, Math.floor(this.width * 0.7 / this.scale) * this.scale, (Math.floor(this.height * 0.7 / this.scale) + j) * this.scale, 24, 48)
                 this.colliderAssets.draw(139.3, 113.8, 4, 6.4, (Math.floor(this.width * 0.7 / this.scale) + 10.33) * this.scale, (Math.floor(this.height * 0.7 / this.scale) + j) * this.scale, 32, 48)
             }
-
+            
             // --- Rendering buildings ---
             this.colliderAssets.draw(8, 158, 80, 72, 240, 462, 240, 210);
             this.colliderAssets.draw(14, 340, 112, 90, 810, 414, 336, 270);
 
-
+            
             // --- Rendering instructions ---
             if (this.players.x >= 305 && this.players.x <= 345 && this.players.y >= 630 && this.players.y <= 670) {
-
+                
                 const menuX = this.width * 0.2;
                 const menuY = this.height * 0.05;
                 const menuWidth = this.width * 0.6;
                 const menuHeight = this.height * 0.9;
-
+                
                 if (this.instructionNumber === 0) {
                     this.ctx.globalAlpha = 0.5
                     this.menus.draw(297, 3.9, 159, 48, this.width * (0.2), this.height * (0.8), this.width * (0.6), this.height * (0.15));
@@ -265,7 +263,7 @@ export class Game {
                     this.ctx.fillText('Press "B" to get back on this menu', this.width * (0.2) + 40, this.height * (0.8) + 100)
                 }
                 else if (this.instructionNumber === 1) {
-
+                    
                     this.ctx.globalAlpha = 0.8
                     this.menus.draw(299, 6, 156, 43, menuX, menuY, menuWidth, menuHeight);
                     this.ctx.globalAlpha = 1
@@ -283,7 +281,7 @@ export class Game {
                 this.instructionNumber = 0
             }
 
-
+            
             // --- Rendering dialogs ---
             if (this.players.x >= 940 && this.players.x <= 999 && this.players.y >= 660 && this.players.y <= 690) {
                 this.ctx.globalAlpha = 0.5
@@ -342,14 +340,15 @@ export class Game {
                     this.ctx.fillText(`You Chose all three!`, this.width * (0.25), this.height * (0.8) + 85)
                 }
             }
-
-
+            
+            
         }
         else if (this.scene === 'battle') {
             this.battle.render()
         }
     }
-
+}
+    
     async update() {
         if (this.scene === 'world') {
             this.setupDone = false
@@ -367,7 +366,7 @@ export class Game {
             this.battle.update();
         }
     }
-
+    
     controls() {
         window.onkeydown = (e) => {
             if (e.key === 'Enter') {
@@ -508,10 +507,8 @@ async function IntroShow(ctx, path) {
 }
 
 
-
-
 window.addEventListener('load', async function () {
-    if (window.innerWidth < 768) {  // adjust threshold if needed
+    if (window.innerWidth < 768) {
         document.getElementById('mobile-warning').style.display = 'block';
       }
     const canvas = document.getElementById('map');
