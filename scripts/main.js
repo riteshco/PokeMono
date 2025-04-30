@@ -207,7 +207,7 @@ export class Game {
                             this.assets.draw(94, 28, 32, 52, 64 * i, 104 * j, 64, 104);
                         }
                     }
-                    else if (j >= Math.floor(((this.height * (0.46)) / this.scale))) {
+                    else if (j === Math.floor(((this.height * (0.46)) / this.scale))) {
                         if (i < Math.floor((this.width * 0.44) / this.scale) + 1) {
                             this.assets.draw(94, 28, 32, 52, 64 * i, 104 * j, 64, 104);
                         }
