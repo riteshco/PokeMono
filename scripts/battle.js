@@ -131,6 +131,7 @@ export class Battle {
     }
 
     async setup2(){
+        this.utils.showLoadingScreen()
         this.ourStarter = await this.utils.fetchPokemonStat(this.currentData);
         this.ourStarter.hp = await this.utils.getStat(this.ourStarter.stats, "hp");
         this.ourStarterTotalHP = this.ourStarter.hp
@@ -141,7 +142,8 @@ export class Battle {
         this.pp3= await this.utils.getMovePP(this.ourStarter.moves[2].move.name)
         this.totalpp3 = this.pp3
         this.pp4= await this.utils.getMovePP(this.ourStarter.moves[3].move.name)
-        this.totalpp3 = this.pp4
+        this.totalpp4 = this.pp4
+        this.utils.hideLoadingScreen()
     }
 
     async setup() {
@@ -163,10 +165,10 @@ export class Battle {
         this.pp3= await this.utils.getMovePP(this.ourStarter.moves[2].move.name)
         this.totalpp3 = this.pp3
         this.pp4= await this.utils.getMovePP(this.ourStarter.moves[3].move.name)
-        this.totalpp3 = this.pp4
+        this.totalpp4 = this.pp4
 
 
-        this.enemy.hp = this.utils.getStat(this.enemy.stats, "hp");
+        this.enemy.hp = await this.utils.getStat(this.enemy.stats, "hp");
         this.enemyTotalHP = this.enemy.hp
     }
 

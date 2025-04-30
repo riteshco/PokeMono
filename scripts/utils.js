@@ -60,8 +60,8 @@ export class Utils{
 
 
     async GetRandomPokemon(){
-        const MaxID = 1010
-        const randomID = Math.floor(Math.random() * 1010) + 1;
+        const MaxID = 700
+        const randomID = Math.floor(Math.random() * MaxID) + 1;
 
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomID}`)
         const data = await response.json()
@@ -78,13 +78,13 @@ export class Utils{
 
     isMobileOrTablet() {
         const screenWidth = window.innerWidth;
-        const mobileBreakpoint = 1024;
+        const mobileBreakpoint = 1280;
       
         const userAgent = navigator.userAgent;
         const navigationTest= /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
           userAgent
         );
-        return navigationTest || screenWidth<mobileBreakpoint
+        return navigationTest || screenWidth<=mobileBreakpoint
       }
 
     
